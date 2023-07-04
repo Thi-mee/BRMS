@@ -1,0 +1,37 @@
+
+{
+  "endpoint": "api/pickuppoints/{id}",
+  "method": "PUT",
+  "params": [
+    {
+      "name": "id",
+      "type": "string",
+      "description": "Pickup point id"
+    }
+  ],
+  "body": {
+    "locationId": "string",
+    "name": "string",
+    "title": "string",
+    "description": "string",
+    "busStop": "string",
+    "code": "string",
+    "status": 1
+  },
+
+  "response": {
+    "status": 200,
+    "message": "Pickup point updated successfully",
+    "data": {
+      "id": "string",
+      "locationId": "string",
+      "name": "string",
+      "title": "string",
+      "description": "string",
+      "busStop": "string",
+      "code": "string",
+      "status": 1
+    }
+  }
+}
+

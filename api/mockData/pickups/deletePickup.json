@@ -1,0 +1,30 @@
+{
+  "endPoint": "api/pickuppoints/:id",
+  "method": "DELETE",
+  "params": {
+    "id": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "description": "Get a pickup point by id",
+
+  "response": {
+    "status": {
+      "200": {
+        "description": "OK"
+      },
+      "404": {
+        "description": "Not found"
+      }
+    },
+    "message": {
+      "200": {
+        "type": "string"
+      },
+      "404": {
+        "type": "string"
+      }
+    }
+  }
+}

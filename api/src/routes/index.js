@@ -1,7 +1,9 @@
-const router = require('express').Router();
 
 
-module.exports = function(app) {
+
+module.exports = function (app) {
+
+  app.use('/api/auth', require('./auth'));
+
   
-
 };

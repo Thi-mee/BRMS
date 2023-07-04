@@ -1,0 +1,20 @@
+{
+  "endpoint": "/api/locations",
+  "method": "GET",
+  "body": {},
+  "description": "Get all locations",
+
+  "auth": true,
+  "role": ["admin"],
+  "params": {
+    "page": "number",
+    "limit": "number",
+    "sort": "string",
+    "search": "string"
+  },
+
+  "response": {
+    "success": true,
+    "data": []
+  }
+}

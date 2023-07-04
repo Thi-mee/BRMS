@@ -1,0 +1,44 @@
+{
+  "endpoint": "api/pickuppoints",
+  "method": "GET",
+  "body1": {
+    "locationId": "lmnkbj",
+    "name": "lmnkbj",
+    "title": "lmnkbj",
+    "description": "lmnkbj",
+    "busStop": "lmnkbj",
+    "code": "lmnkbj",
+    "status": 1
+  },
+  "body2": {
+    "name": "string",
+    "title": "string",
+    "description": "string",
+    "busStop": "string",
+    "code": "string",
+    "status": 1,
+    "location": {
+      "title": "string",
+      "lcda": "string",
+      "city": "string",
+      "area": "string",
+      "description": "string",
+      "landmark": "string"
+    }
+  }
+
+  "response": {
+    "status": 201,
+    "message": "Pickup point created successfully",
+    "data": {
+      "id": "lmnkbj",
+      "name": "string",
+      "title": "string",
+      "description": "string",
+      "busStop": "string",
+      "code": "string",
+      "status": 1,
+      "locationId": "lmnkbj",
+    }
+  }
+}

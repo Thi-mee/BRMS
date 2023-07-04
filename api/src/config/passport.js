@@ -23,6 +23,11 @@ module.exports = function(app, passport) {
   passport.use(new LocalStrategy(
     {usernameField: 'email'},
     function(email, password, done) {
+      const errors = loginValidator.validate(req.body);
+      if (errors.length > 0) {
+        return done(null, false, {message: errors.join(', ')});
+      }
+
       pool.query('SELECT * FROM users WHERE email = $1', [email], function(err, result) {
         if (err) return done(err);
         if (!result.rows.length) return done(null, false, {message: 'Incorrect email.'});

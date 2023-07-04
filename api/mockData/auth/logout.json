@@ -1,0 +1,10 @@
+{
+  "endpoint": "/api/auth/logout",
+  "method": "POST",
+  "body": {},
+
+  "response": {
+    "success": true,
+    "message": "string"
+  }
+}

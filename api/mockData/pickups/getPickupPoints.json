@@ -1,0 +1,14 @@
+{
+  "endpoint": "/api/pickupPoints",
+  "method": "GET",
+  "body": {},
+  "headers": {},
+  "params": {},
+
+  "response": {
+    "success": {
+      "code": 200,
+      "data": []
+    }
+  }
+}

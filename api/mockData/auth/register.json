@@ -1,0 +1,19 @@
+{
+  "endpoint": "/api/auth/register",
+  "method": "POST",
+  "body": {
+    "email": "string",
+    "password": "string"
+  },
+
+  "response": {
+    "success": true,
+    "message": "string",
+    "token": "string",
+    "user": {
+      "id": "string",
+      "email": "string",
+      "password": "string"
+    }
+  }
+}
