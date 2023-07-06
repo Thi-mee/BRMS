@@ -7,7 +7,7 @@
 
   "response": {
     "success": {
-      "code": 200,
+      "code": true,
       "data": []
     }
   }

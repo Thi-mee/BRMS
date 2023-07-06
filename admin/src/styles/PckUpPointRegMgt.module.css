@@ -1,0 +1,8 @@
+.button_flex{
+    font-family: "Poppins";
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 3em;
+    margin-bottom: 3em;
+    gap: 2em;
+}

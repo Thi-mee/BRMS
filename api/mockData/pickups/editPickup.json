@@ -1,6 +1,6 @@
 
 {
-  "endpoint": "api/pickuppoints/{id}",
+  "endpoint": "api/editPickUpPoints/{id}",
   "method": "PUT",
   "params": [
     {
@@ -20,7 +20,7 @@
   },
 
   "response": {
-    "status": 200,
+    "status": true,
     "message": "Pickup point updated successfully",
     "data": {
       "id": "string",

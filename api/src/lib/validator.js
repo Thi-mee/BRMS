@@ -1,10 +1,5 @@
 
 
-
-
-
-
-
 class Validator {
   #validationRules;
   constructor(validationRules) {

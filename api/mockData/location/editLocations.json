@@ -1,0 +1,33 @@
+
+{
+    "endpoint": "api/editLocation/{id}",
+    "method": "PUT",
+    "params": [
+      {
+        "name": "id",
+        "type": "string",
+        "description": "location id"
+      }
+    ],
+    "body": {
+      "title": "string",
+      "description": "string",
+      "landmark": "string",
+      "city": "string",
+      "lcda": "string",
+      "area": "string"
+    },
+  
+    "response": {
+      "status": true,
+      "message": "Location updated successfully",
+      "data": {
+        "title": "string",
+        "description": "string",
+        "landmark": "string",
+        "city": "string",
+        "lcda": "string",
+        "area": "string"
+      }
+    }
+  }

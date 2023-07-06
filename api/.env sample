@@ -1,7 +1,0 @@
-JWT_SECRET=yoursecret
-SESSION_SECRET=yoursecret
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=brms
-DB_USER=postgres
-DB_PASSWORD=yourpassword

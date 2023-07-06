@@ -1,0 +1,56 @@
+.church_img{
+    width: 50%;
+}
+
+.footer_container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2em;
+    max-width: 90%;
+    margin: 0 auto;
+    margin-top: 5em;
+    margin-bottom: 5em;
+}
+
+.footer_container > div{
+    flex: 25%;
+}
+
+.social_icons{
+    color: blue;
+    font-size: 1.3rem;
+    margin: 0.2em;
+}
+
+.first_flex{
+    /* border: 1px solid red; */
+    padding: 1em;
+}
+
+.first_flex_para{
+    color: var(--tertiary-color);
+}
+
+.second_flex{
+    display: flex;
+    flex-direction: column;
+}
+
+.greater_than_icon{
+    margin-right: 1em;
+    color: var(--tertiary-color);
+}
+
+.second_flex > h3, .third_flex > h3{
+    margin-bottom: 2em;
+}
+
+.second_flex > a, .third_flex > a{
+    margin-bottom: 1em;
+}
+
+.third_flex{
+    display: flex;
+    flex-direction: column;
+}

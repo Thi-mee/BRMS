@@ -11,20 +11,13 @@
 
   "response": {
     "status": {
-      "200": {
+      "true": {
         "description": "OK"
       },
-      "404": {
+      "false": {
         "description": "Not found"
       }
     },
-    "message": {
-      "200": {
-        "type": "string"
-      },
-      "404": {
-        "type": "string"
-      }
-    }
+    "message": "string"
   }
 }

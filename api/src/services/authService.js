@@ -1,4 +1,4 @@
-const { pool } = require('../config/dbConfig');
+const pool = require('../config/dbConfig');
 
 async function registerUser(userData) {
   try {
