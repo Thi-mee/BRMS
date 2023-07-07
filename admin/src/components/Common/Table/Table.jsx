@@ -22,10 +22,10 @@ const Tables = ({pickUpPoints}) => {
             return(
                 <tr key={index}>
                     <td>{index + 1}</td>
-                    <td>{value.Name}</td>
-                    <td>{value.Title}</td>
-                    <td>A Bus Stop</td>
-                    <td>{value.Status > 0 ? "Active" : "Inactive"}</td>
+                    <td>{value.name}</td>
+                    <td>{value.title}</td>
+                    <td>{value.busStop}</td>
+                    <td>{value.status}</td>
                     <td>{<FaRegEdit/>}</td>
                 </tr>
     

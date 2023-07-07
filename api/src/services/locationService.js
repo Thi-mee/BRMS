@@ -24,11 +24,13 @@ async function createLocation(location) {
 
 async function getLocations() {
   try {
-    const query = 'SELECT * FROM location ORDER BY "id" ASC';
+    const query = 'SELECT * FROM brms.locations ORDER BY "id" ASC';
     const { rows } = await pool.query(query);
     if (rows.length === 0) return null;
-    return rows[0];
+    console.log(rows);
+    return rows;
   } catch (error) {
+    console.log(error)
     throw new Error("Failed to get locations");
   }
 }

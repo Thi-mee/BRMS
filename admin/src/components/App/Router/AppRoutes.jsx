@@ -1,9 +1,9 @@
 import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
-import HomePage from "../../../../pages/admin/HomePage";
-import PickUpPointRegMgt from '../../../../pages/admin/Pick-Up_Point_Reg_Mgt';
-import SinglePickUpPoint from '../../../../pages/admin/Single_PickUpPoint';
-import BulkPickUpPoints from "../../../../pages/admin/Bulk_PickUpPoints";
+import HomePage from "../../../views/HomePage";
+import PickUpPointRegMgt from '../../../views/Pick-Up_Point_Reg_Mgt';
+import SinglePickUpPoint from '../../../views/Single_PickUpPoint';
+import BulkPickUpPoints from "../../../views/Bulk_PickUpPoints";
 
 export const router = createBrowserRouter([
     {

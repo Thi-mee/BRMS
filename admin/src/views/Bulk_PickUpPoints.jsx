@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import CSVReaderProp from "../../components/Common/CSVReader/CSVReader";
+import CSVReaderProp from "../components/Common/CSVReader/CSVReader";
 
 const Bulk_PickUpPoints = () => {
     const [xlsxData, setXlsxData] = useState([]);

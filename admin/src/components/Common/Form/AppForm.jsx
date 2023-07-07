@@ -2,39 +2,40 @@ import React, {useState} from "react";
 import { Form, Col, Row, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useFormUtils } from "../../utils/FormUtils";
+import { addPickUpPoints } from "../../../store/thunks/pickUpPointThunks";
+import { useDispatch } from "react-redux"
 
 const AppForm = ({
-  first_label,
-  second_label,
-  third_label_item,
-  third_label,
-  fourth_label,
-  fifth_label,
-  fourth_label_item,
-  btn_text,
+  errors,
+  locationError,
+  handleShow,
+  select
 }) => {
   const navigate = useNavigate();
-  const [validated, setValidated] = useState(false);
-  const { handleValueChange, form } = useFormUtils()
+  const { handleValueChange, form, locationForm, setLocationForm, handleValueLocationChange, initLocForm } = useFormUtils();
+  const [addRequestStatus, setAddRequestStatus] = useState('idle');
+  const dispatch = useDispatch();
 
-  const handleSubmit = (event) => {
-    const formTarget = event.currentTarget;
-    event.preventDefault();
-    if (formTarget.checkValidity() === false) {
-      event.stopPropagation();
-    }
-    setValidated(true);
+  // select ? initLocForm() : ""
 
+  const handleThis = (e) => {
+    e.preventDefault();
+    form.location = locationForm;
+    form.status === true ? form.status = "active" : form.status = "inactive"
     console.log(form)
-  };
+
+
+    dispatch(addPickUpPoints(form))
+
+  }
+
 
 
   return (
-    <Form noValidate validated={validated} onSubmit={handleSubmit}>
-      {btn_text && (
+    <Form>
         <div className="component_container button_container">
-          <Button variant="secondary" className="m-2" type="submit">
-            {btn_text}
+          <Button variant="secondary" className="m-2" onClick={(e)=>{handleThis(e)}}>
+            Save
           </Button>
           <Button
             variant="secondary"
@@ -46,115 +47,209 @@ const AppForm = ({
             Back
           </Button>
         </div>
-      )}
       <Row className="mb-3">
-        {first_label && (
           <Form.Group as={Col} md="6" controlId="validationCustom01">
             <Form.Label>
-              {first_label} <span>*</span>
+              Name <span>*</span>
             </Form.Label>
             <Form.Control
-              required
+            required
               type="text"
-              name={first_label}
-              placeholder={first_label}
-              defaultValue=""
+              name="name"
+              placeholder="Name"
+              value={form.name}
+              isInvalid={!!errors['name']}
               onChange={(e)=>{handleValueChange(e)}}
             />
             <Form.Control.Feedback type="invalid">
-              Please Provide a valid {first_label}!
+              {errors['name']}
             </Form.Control.Feedback>
           </Form.Group>
-        )}
-        {second_label && (
+    
           <Form.Group as={Col} md="6" controlId="validationCustom02">
-            <Form.Label>{second_label}</Form.Label>
+            <Form.Label>Title</Form.Label>
             <Form.Control
               type="text"
-              name={second_label}
-              placeholder={second_label}
-              defaultValue=""
+              name='title'
+              placeholder='Title'
+              value={form.title}
               onChange={(e)=>{handleValueChange(e)}}
             />
           </Form.Group>
-        )}
       </Row>
       <Row className="mb-3">
-        {third_label && (
           <Form.Group
             as={Col}
-            md={third_label_item ? "6" : "12"}
+            md="12"
             controlId="validationCustom03"
           >
             <Form.Label>
-              {third_label} <span>*</span>
+              Nearest Bus-Stop <span>*</span>
             </Form.Label>
-            <Form.Control type="text" placeholder={third_label} required name={third_label} onChange={(e)=>{handleValueChange(e)}} />
+            <Form.Control type="text" placeholder='Nearest Bus Stop' isInvalid={!!errors['busStop']} required name='busStop' value={form.busStop} onChange={(e)=>{handleValueChange(e)}} />
             <Form.Control.Feedback type="invalid">
-              Please provide a valid {third_label}!
+              {errors['busStop']}
             </Form.Control.Feedback>
           </Form.Group>
-        )}
-        {third_label_item && (
-          <Form.Group
-            as={Col}
-            md={third_label_item ? "6" : "12"}
-            controlId="validationCustom03"
-          >
-            <Form.Label>
-              {third_label_item} <span>*</span>
-            </Form.Label>
-            <Form.Control type="text" placeholder={third_label_item} required name={third_label_item} onChange={(e)=>{handleValueChange(e)}} />
-            <Form.Control.Feedback type="invalid">
-              Please provide a valid {third_label_item}!
-            </Form.Control.Feedback>
-          </Form.Group>
-        )}
       </Row>
       <Row className="mb-3">
-        {fourth_label && (
           <Form.Group
             as={Col}
-            md={fourth_label_item ? "6" : "12"}
+            md="12"
             controlId="validationCustom03"
           >
             <Form.Label>
-              {fourth_label} <span>*</span>
+              Description <span>*</span>
             </Form.Label>
             <Form.Control
               required
               as="textarea"
-              placeholder={`Leave a ${fourth_label} here`}
-              name={fourth_label}
+              placeholder={`Leave a Description here`}
+              name='description'
+              value={form.description}
+              isInvalid={!!errors['description']}
               onChange={(e)=>{handleValueChange(e)}}
             />
             <Form.Control.Feedback type="invalid">
-              Please provide a valid {fourth_label}!
+              {errors['description']}
             </Form.Control.Feedback>
           </Form.Group>
-        )}
-        {fourth_label_item && (
-          <Form.Group
-            as={Col}
-            md={fourth_label_item ? "6" : "12"}
-            controlId="validationCustom03"
-          >
-            <Form.Label>
-              {fourth_label_item} <span>*</span>
-            </Form.Label>
-            <Form.Control
-              as="textarea"
-              placeholder={`Leave a ${fourth_label_item} here`}
-            />
-            <Form.Control.Feedback type="invalid">
-              Please provide a valid {fourth_label}!
-            </Form.Control.Feedback>
-          </Form.Group>
-        )}
       </Row>
       <Form.Group className="mb-3">
-        {fifth_label && <Form.Check label={fifth_label} name={fifth_label} onChange={(e)=>{handleValueChange(e)}} />}
+        <Form.Check label='Status' name='status' value={form.status} onChange={(e)=>{handleValueChange(e)}} />
       </Form.Group>
+
+      <div className="heading">
+        <h1 className="pt-5 pb-3">Location</h1>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            handleShow();
+          }}
+        >
+          Select Location
+        </Button>
+      </div>
+
+      <Row className="mb-3">
+        <Form.Group as={Col} md="6" controlId="validationCustom01">
+          <Form.Label>
+            Title <span>*</span>
+          </Form.Label>
+          <Form.Control
+            required
+            type="text"
+            name="title"
+            placeholder="Title"
+            value={locationForm.title}
+            isInvalid={!!locationError['title']}
+            onChange={(e) => {
+              handleValueLocationChange(e);
+            }}
+          />
+          <Form.Control.Feedback type="invalid">
+            {locationError['title']}
+          </Form.Control.Feedback>
+        </Form.Group>
+
+        <Form.Group as={Col} md="6" controlId="validationCustom02">
+          <Form.Label>LCDA <span>*</span></Form.Label>
+          <Form.Control
+            type="text"
+            name="lcda"
+            required
+            placeholder="LCDA"
+            value={locationForm.lcda}
+            isInvalid={!!locationError['lcda']}
+            onChange={(e) => {
+              handleValueLocationChange(e);
+            }}
+          />
+        </Form.Group>
+        <Form.Control.Feedback type="invalid">
+            {locationError['lcda']}
+        </Form.Control.Feedback>
+      </Row>
+      <Row className="mb-3">
+        <Form.Group as={Col} md="6" controlId="validationCustom03">
+          <Form.Label>
+            City <span>*</span>
+          </Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="City"
+            required
+            name="city"
+            value={locationForm.city}
+            isInvalid={!!locationError['city']}
+            onChange={(e) => {
+              handleValueLocationChange(e);
+            }}
+          />
+          <Form.Control.Feedback type="invalid">
+            {locationError['city']}
+          </Form.Control.Feedback>
+        </Form.Group>
+        <Form.Group as={Col} md="6" controlId="validationCustom03">
+          <Form.Label>
+            Area <span>*</span>
+          </Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Area"
+            required
+            name="area"
+            value={locationForm.area}
+            isInvalid={!!locationError['area']}
+            onChange={(e) => {
+              handleValueLocationChange(e);
+            }}
+          />
+          <Form.Control.Feedback type="invalid">
+            {locationError['area']}
+          </Form.Control.Feedback>
+        </Form.Group>
+      </Row>
+      <Row className="mb-3">
+        <Form.Group as={Col} md="6" controlId="validationCustom03">
+          <Form.Label>
+            Description <span>*</span>
+          </Form.Label>
+          <Form.Control
+            required
+            as="textarea"
+            placeholder={`Leave a Description here`}
+            name="description"
+            value={locationForm.description}
+            isInvalid={!!locationError['description']}
+            onChange={(e) => {
+              handleValueLocationChange(e);
+            }}
+          />
+          <Form.Control.Feedback type="invalid">
+            {locationError['description']}
+          </Form.Control.Feedback>
+        </Form.Group>
+        <Form.Group as={Col} md="6" controlId="validationCustom03">
+          <Form.Label>
+            Landmark <span>*</span>
+          </Form.Label>
+          <Form.Control
+            required
+            as="textarea"
+            placeholder={`Leave a Landmark here`}
+            name="landmark"
+            value={locationForm.landmark}
+            isInvalid={!!locationError['landmark']}
+            onChange={(e) => {
+              handleValueLocationChange(e);
+            }}
+          />
+          <Form.Control.Feedback type="invalid">
+            {locationError['landmark']}
+          </Form.Control.Feedback>
+        </Form.Group>
+      </Row>
     </Form>
   );
 };

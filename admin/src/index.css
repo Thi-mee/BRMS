@@ -1,13 +1,91 @@
-body {
+@import url('https://fonts.googleapis.com/css2?family=Average+Sans&family=Poppins&display=swap');
+
+body{
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins";
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+:root{
+  --main-color: #D36500;
+  --primary-color: #b35a07;
+  --secondary-color: #343434;
+  --hover-color: #171717;
+  --text-color: #fff;
+  --primary-text-color: #000;
+  --tertiary-color: #767676;
+}
+
+.button_flex{
+  display: flex;
+  gap: 1em;
+  border: 1px solid red;
+}
+
+h1{
+  margin: 0;
+}
+
+a{
+  text-decoration: none;
+  color: var(--primary-text-color);
+}
+
+.App{
+  display: flex;
+}
+
+.app-container{
+  /* border: 1px solid red; */
+  width: 90em;
+  padding: 1em;
+}
+
+.component_container{
+  display: flex;
+  font-family: "Poppins";
+}
+
+span{
+  color: red;
+}
+
+.heading{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.single_pickup{
+  border: 1px solid var(--tertiary-color);
+  border-radius: 10px;
+  margin: 0 3em;
+  width: 90em;
+  padding: 2em;
+}
+
+.button_container{
+  /* margin-left: 20em; */
+  /* border: 1px solid red; */
+  display: flex;
+  gap: 1em;
+  width: 100%;
+  justify-content: flex-end;
+  align-items: flex-end
+}
+
+.bulktable_icons{
+  margin-right: 1em;
+  cursor: pointer;
+  color: green;
+  font-size: 1.3rem;
+}
+
+*{
+  font-family: 'Poppins';
+}
+
+Modal{
+  width: 90%;
 }

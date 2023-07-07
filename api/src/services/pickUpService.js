@@ -1,9 +1,10 @@
 const pool = require("../config/dbConfig");
 
 async function addPickUp(pickUp) {
+  console.log({pickUp})
   try {
     const query =
-      "INSERT INTO brms.pickuppoints (id, name, title, description, busStop, code, status, locationId) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *";
+      'INSERT INTO brms.pickuppoints (id, name, title, description, "busStop", code, status, "locationId") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *';
     const values = [
       pickUp.id,
       pickUp.name,
@@ -17,7 +18,7 @@ async function addPickUp(pickUp) {
     const { rows } = await pool.query(query, values);
     console.log(rows)
     if (rows.length === 0) return null;
-    return rows[0];
+    return rows;
   } catch (error) {
     if (error.code === "42703") {
       console.log(error);
@@ -83,8 +84,7 @@ async function getPickUpPoints() {
   try {
     const query = 'SELECT * FROM brms.pickuppoints ORDER BY "id" ASC';
     const { rows } = await pool.query(query);
-    if (rows.length === 0) return null;
-    return rows[0];
+    return rows;
   } catch (error) {
     console.log(error);
     throw new Error("Failed to get pick up points");

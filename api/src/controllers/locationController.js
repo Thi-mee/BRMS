@@ -8,6 +8,7 @@ const getLocations = async (req, res, next) => {
         if(retVal === null) return res.status(400).json(new ErrorResponse({ message: 'Failed to get locations'}))
         return res.status(200).json(new SuccessResponse({ data: retVal }))
     } catch(error){
+        console.log(error)
         return res.status(500).json(new ErrorResponse({ message: 'Failed to get locations'}));
     }
 }

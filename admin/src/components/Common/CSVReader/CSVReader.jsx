@@ -4,17 +4,15 @@ import BulkPickUpTable from "../Table/BulkPickUpTable";
 import {FaTimes} from "react-icons/fa";
 import AlertComp from "../Alert/AlertComp";
 import AppModal from "../BRMS_Modal/AppModal";
-import { usePickUpPointsContext } from "../../App/Providers/PickUpProvider";
 import { locationTableModal } from "../Table/LocationTable";
-import { useLocationContext } from "../../App/Providers/LocationProvider";
 
 const CSVReaderProp = ({ xlsxData, setXlsxData }) => {
   const XLSX = require("xlsx");
   const [renderTable, setRenderTable] = useState(false);
   const [show, setShow] = useState(false);
 
-  const { showModal, modalHeading, setModalHeading, closeBtn, setCloseBtn, handleClose, handleShow } = usePickUpPointsContext();
-  const { locations } = useLocationContext();
+  // const { showModal, modalHeading, setModalHeading, closeBtn, setCloseBtn, handleClose, handleShow } = usePickUpPointsContext();
+  // const { locations } = useLocationContext();
 
   const fileInput = useRef("")
 
@@ -50,9 +48,9 @@ const CSVReaderProp = ({ xlsxData, setXlsxData }) => {
 
   return (
     <>
-    <AppModal handleClose={handleClose} handleShow={handleShow} show={showModal} modalHeading={modalHeading} closeBtn={closeBtn}>
-      {locationTableModal(locations)}
-    </AppModal>
+    {/* <AppModal handleClose={handleClose} handleShow={handleShow} show={showModal} modalHeading={modalHeading} closeBtn={closeBtn}> */}
+      {/* {locationTableModal(locations)} */}
+    {/* </AppModal> */}
     {show && <AlertComp  text={<p><FaTimes/>Invalid file Input</p>} variant="danger" />}
       <div className="component_container">
         <Form.Group controlId="formFile" className="mt-4">
@@ -71,7 +69,7 @@ const CSVReaderProp = ({ xlsxData, setXlsxData }) => {
         </Button>
       </div>
       <Button className="button_container">Apply All</Button>
-      <BulkPickUpTable renderTable={renderTable} xlsxData={xlsxData} handleShow={handleShow} setModalHeading={setModalHeading} setCloseBtn={setCloseBtn} />
+      {/* <BulkPickUpTable renderTable={renderTable} xlsxData={xlsxData} handleShow={handleShow} setModalHeading={setModalHeading} setCloseBtn={setCloseBtn} /> */}
     </>
   );
 };

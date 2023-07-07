@@ -14,9 +14,6 @@ const AppModal = ({modalHeading, show, handleClose, handleShow, children, closeB
         <Modal.Body>{children}</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleClose}>
             {closeBtn}
           </Button>
         </Modal.Footer>

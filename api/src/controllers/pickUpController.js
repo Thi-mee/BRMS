@@ -9,6 +9,7 @@ const locationService = require("../services/locationService");
 const { SuccessResponse } = require("../lib/pickup");
 
 const addPickUp = async (req, res, next) => {
+  console.log({initial: req.body})
   if (!req.body.locationId) {
     const errors = locationValidator.validate(req.body.location);
     if (errors.length > 0) {
@@ -25,7 +26,8 @@ const addPickUp = async (req, res, next) => {
     } catch (err) {
       console.log(err);
     }
-  } else if (req.body.locationId && req.body.location) {
+  } 
+  else if (req.body.locationId && req.body.location) {
     const errors = locationValidator.validate(req.body.location);
     if (errors.length > 0) {
       return res
@@ -43,6 +45,7 @@ const addPickUp = async (req, res, next) => {
       console.log(error);
     }
   }
+  console.log({mid: req.body})
   delete req.body.location;
   req.body.id = generateUniqueId();
   req.body.code = generateCode(req.body.name);
@@ -123,7 +126,7 @@ const getPickUpPoints = async (req, res, next) => {
     if (retVal === null)
       return res
         .status(400)
-        .json(ErrorMessage({ message: "Failed to get pick up points" }));
+        .json(new ErrorResponse({ message: "Failed to get pick up points" }));
     return res.status(200).json(new SuccessResponse({ data: retVal }));
   } catch (error) {
     console.log(error);

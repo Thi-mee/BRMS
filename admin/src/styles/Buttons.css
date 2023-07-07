@@ -1,0 +1,41 @@
+.btn-primary{
+    background-color: var(--main-color);
+    border: none;
+    padding: .5em 2.5em;
+    font-size: 1.03em;
+    color: var(--text-color);
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: "Poppins";
+    /* margin: 1em; */
+    transition: ease-in-out 300ms;
+}
+
+.btn-primary:hover{
+    background-color: var(--primary-color);
+}
+
+.btn-outline{
+    background-color: transparent;
+    border: 1.5px solid var(--main-color);
+    padding: .5em 3em;
+    font-size: 1.03em;
+    color: var(--main-color);
+    font-weight: 500;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: "Poppins";
+    /* margin: 1em; */
+    transition: ease-in-out 300ms;
+}
+
+.btn-outline:hover{
+    background-color: var(--main-color);
+    color: var(--text-color);
+}
+
+.button_flex{
+    display: flex;
+    gap: 1em;
+    border: 1px solid red;
+  }
