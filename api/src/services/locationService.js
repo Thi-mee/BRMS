@@ -26,7 +26,6 @@ async function getLocations() {
   try {
     const query = 'SELECT * FROM brms.locations ORDER BY "id" ASC';
     const { rows } = await pool.query(query);
-    if (rows.length === 0) return null;
     console.log(rows);
     return rows;
   } catch (error) {

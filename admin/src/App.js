@@ -4,11 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (
-    <div className="App">
-      <RouterProvider router={router}>
-
-      </RouterProvider>
-    </div>
+      <RouterProvider router={router}></RouterProvider>
   );
 }
 

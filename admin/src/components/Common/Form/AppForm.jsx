@@ -41,7 +41,7 @@ const AppForm = ({
             variant="secondary"
             className="m-2"
             onClick={() => {
-              navigate("/pick_up_point_reg");
+              navigate(-1);
             }}
           >
             Back

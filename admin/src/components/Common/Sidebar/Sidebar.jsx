@@ -8,7 +8,7 @@ const Sidebar = () => {
     <div className={style.container}>
         <NavLink>Dashboard</NavLink>
         <NavLink>Book Categories</NavLink>
-        <NavLink to="/pick_up_point_reg"><MdOutlineAppRegistration/>Pick-Up-Point Registration</NavLink>
+        <NavLink to="/pick_up_points"><MdOutlineAppRegistration/>Pick-Up-Point Registration</NavLink>
         <NavLink>Location</NavLink>
         <NavLink>Authorization Workflow</NavLink>
 

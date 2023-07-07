@@ -1,13 +1,22 @@
-import React from "react";
-import "../../../styles/Buttons.css";
+import { Button } from "react-bootstrap";
 
-export const Button = ({ onClick, useRef, className, children }) => {
+/**
+ * @param {{
+ *  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+ *  children: React.ReactNode;
+ *  variant: "primary" | "secondary" | "success" | "outline-primary";
+ * }} props
+ */
+const XButton = ({ onClick, children, ...rest }) => {
   return (
-    <button
-      className={`${className} btn-primary`}
-      onClick={(e)=>{onClick(e)}}
-    >
+    <Button
+      {...rest}
+      onClick={(e) => {
+        onClick(e);
+      }}>
       {children}
-    </button>
+    </Button>
   );
 };
+
+export default XButton;

@@ -5,7 +5,7 @@ const Bulk_PickUpPoints = () => {
     const [xlsxData, setXlsxData] = useState([]);
 
   return (
-    <div className="container">
+    <div className="page">
       <h1>Bulk Pick Up Points</h1>
         <CSVReaderProp xlsxData={xlsxData} setXlsxData={setXlsxData} />
 

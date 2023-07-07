@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const session = require('express-session');
 const passport = require('passport');
-// const setUpDb = require('./setupDb')
+const setUpDb = require('./setupDb')
 
 const app = express();
 dotenv.config();
@@ -21,8 +21,7 @@ app.use(
   })
 );
 
-
-// setUpDb()
+setUpDb()
 require('./config/passport')(app, passport);
 
 require('./routes')(app);

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import AppForm from "../components/Common/Form/AppForm";
-import { Button } from "react-bootstrap";
 import AppModal from "../components/Common/BRMS_Modal/AppModal";
 import { useDispatch, useSelector } from "react-redux"
 import { singlePickUpModal } from "../components/Common/Table/LocationTable";
@@ -35,20 +34,25 @@ const Single_PickUpPoint = () => {
   }, [locationStatus, locations, dispatch])
   
   return (
-    <div className="single_pickup">
-      <AppModal
-        show={show}
-        handleClose={handleClose}
-        modalHeading={"Select Location"}
-        closeBtn={'Close'}
-      >
-        {singlePickUpModal(locations, selectLocation)}
-      </AppModal>
-      <div className="heading">
-        <h1 className="pt-5 pb-3">Pick Up Points</h1>
-      </div>
-      <AppForm errors={errors} locationError={locationError} handleShow={handleShow} setLocationObj={locationObj} select={select} setSelect={setSelect} />
-
+    <div className="page">
+        <AppModal
+          show={show}
+          handleClose={handleClose}
+          modalHeading={"Select Location"}
+          closeBtn={"Close"}>
+          {singlePickUpModal(locations, selectLocation)}
+        </AppModal>
+        <div className="heading">
+          <h1 className="pt-5 pb-3">Pick Up Points</h1>
+        </div>
+        <AppForm
+          errors={errors}
+          locationError={locationError}
+          handleShow={handleShow}
+          setLocationObj={locationObj}
+          select={select}
+          setSelect={setSelect}
+        />
     </div>
   );
 };

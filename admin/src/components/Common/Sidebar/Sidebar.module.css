@@ -2,9 +2,13 @@
     /* border: 1px solid red; */
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    width: 20%;
+    min-height: 100vh;
+
+    width: var(--sidebar-width);
     background-color: var(--tertiary-color);
+    position: sticky;
+    top: 0; 
+    height: 100%;
 
 }
 

@@ -1,91 +1,99 @@
-@import url('https://fonts.googleapis.com/css2?family=Average+Sans&family=Poppins&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Average+Sans&family=Poppins&display=swap");
 
-body{
+body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: "Poppins";
 }
 
-:root{
-  --main-color: #D36500;
+:root {
+  --main-color: #d36500;
   --primary-color: #b35a07;
   --secondary-color: #343434;
   --hover-color: #171717;
   --text-color: #fff;
   --primary-text-color: #000;
   --tertiary-color: #767676;
+  --border-color: #c3c3c3;
 }
 
-.button_flex{
+.button_flex {
   display: flex;
   gap: 1em;
   border: 1px solid red;
 }
 
-h1{
+h1 {
   margin: 0;
 }
 
-a{
+a {
   text-decoration: none;
   color: var(--primary-text-color);
 }
 
-.App{
-  display: flex;
-}
 
-.app-container{
-  /* border: 1px solid red; */
-  width: 90em;
-  padding: 1em;
-}
-
-.component_container{
+.component_container {
   display: flex;
   font-family: "Poppins";
 }
 
-span{
+span {
   color: red;
 }
 
-.heading{
+.heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.single_pickup{
-  border: 1px solid var(--tertiary-color);
-  border-radius: 10px;
-  margin: 0 3em;
-  width: 90em;
-  padding: 2em;
+.single_pickup {
+  width: 100%;
 }
 
-.button_container{
+.single-pickup__card {
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 1em;
+  margin: 1em auto;
+  width: 100%;
+}
+
+.button_container {
   /* margin-left: 20em; */
   /* border: 1px solid red; */
   display: flex;
   gap: 1em;
   width: 100%;
   justify-content: flex-end;
-  align-items: flex-end
+  align-items: flex-end;
 }
 
-.bulktable_icons{
+.bulktable_icons {
   margin-right: 1em;
   cursor: pointer;
   color: green;
   font-size: 1.3rem;
 }
 
-*{
-  font-family: 'Poppins';
+* {
+  font-family: "Poppins";
 }
 
-Modal{
+Modal {
   width: 90%;
+}
+
+
+
+
+
+
+.page {
+  padding: 1em;
+  max-width: 980px;
+  margin: 0 auto;
+  min-height: 100%;
 }
