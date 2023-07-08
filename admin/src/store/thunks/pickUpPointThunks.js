@@ -1,30 +1,60 @@
-import {  createAsyncThunk } from '@reduxjs/toolkit'
-import axios from 'axios';
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import { apiCall, getAxiosInstance } from "../../utils/api";
 
-const apiEndpPoint = "http://localhost:5000/api/pickup-points"
+const apiEndPoint = "http://localhost:5000/api/pickup-points";
+const actionTypes = {
+  FETCH_PICKUP_POINTS: "pickuppoints/fetch",
+  ADD_PICKUP_POINTS: "pickuppoints/add",
+  DELETE_PICKUP_POINTS: "pickuppoints/delete",
+  UPDATE_PICKUP_POINTS: "pickuppoints/update",
+};
+const api = getAxiosInstance(apiEndPoint);
 
-export const fetchPickupPoints = createAsyncThunk('pickuppoints/fetch', async (_, {rejectWithValue}) => {
+
+export const fetchPickupPoints = createAsyncThunk(
+  actionTypes.FETCH_PICKUP_POINTS,
+  async (_, { rejectWithValue }) => {
     try {
-        const response = await axios.get(apiEndpPoint);
-        return response.data.data;
+      const response = await apiCall(api,"", "get", {});
+      return response.data;
     } catch (err) {
-        if(!err.response){
-            throw err;
-        }
-        return rejectWithValue(err.response.message);
+      return rejectWithValue(err?.message);
     }
-});
+  }
+);
 
-export const addPickUpPoints = createAsyncThunk('pickuppoints/add', async(form, {rejectWithValue}) => {
-    try{
-        const response = axios.post(apiEndpPoint, form);
-        return response.data
-    } catch(err){
-        if(!err.response){
-            throw err;
-        }
-        return rejectWithValue(err.response.message);
+export const addPickUpPoints = createAsyncThunk(
+  actionTypes.ADD_PICKUP_POINTS,
+  async (form, { rejectWithValue }) => {
+    try {
+      const response = await apiCall(api,"", "post", form);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err?.message);
     }
-})
+  }
+);
 
-// how about having a global error state in a useContext?
+export const deletePickUpPoints = createAsyncThunk(
+  actionTypes.DELETE_PICKUP_POINTS,
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await apiCall(api, `/${id}`, "delete", {});
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err?.message);
+    }
+  }
+);
+
+export const updatePickUpPoints = createAsyncThunk(
+  actionTypes.UPDATE_PICKUP_POINTS,
+  async (form, { rejectWithValue }) => {
+    try {
+      const response = await apiCall(api, "", "put", form);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err?.message);
+    }
+  }
+);

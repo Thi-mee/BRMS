@@ -1,6 +1,6 @@
 
 {
-  "endpoint": "api/editPickUpPoints/{id}",
+  "endpoint": "api/editPickUpPoints",
   "method": "PUT",
   "params": [
     {
