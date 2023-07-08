@@ -34,7 +34,7 @@ const Pick_Up_Point = () => {
 
   return (
     <div className="page">
-      <h1 className="p-4">Pick Up Points</h1>
+      <h1 className="mb-3 mt-2">Pick Up Points</h1>
       {pickUpPoints.length === 0 ? (
         <>
           <div className={style.emptyContainer}>
@@ -57,12 +57,10 @@ const Pick_Up_Point = () => {
         </>
       ) : (
         <>
-          <div className="button_container">
-            <Button onClick={goToSinglePickUpPoint}>
-              Set Up Single Pick Up Point
-            </Button>
+          <div className={style.floatingButtons}>
+            <Button onClick={goToSinglePickUpPoint}>Add a Pick Up Point</Button>
             <Button variant="outline-primary" onClick={goToBulkPickUpPoints}>
-              Set Up Multiple Pick Up Point
+              Add Multiple Pick Up Points
             </Button>
           </div>
 

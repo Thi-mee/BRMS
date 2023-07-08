@@ -5,22 +5,35 @@
     min-height: 100vh;
 
     width: var(--sidebar-width);
-    background-color: var(--tertiary-color);
+    background-color: var(--primary-color);
+    background-image: var(--primary-gradient);
     position: sticky;
     top: 0; 
     height: 100%;
-
+    padding: .6em 12px;
 }
 
-.container > a{
+.title {
+    font-size: 2rem;
+    padding-left: 12px;
+    color: #fff;
+    font-weight: bold;
+    margin-bottom: .5em;
+}
+
+.container > a {
     text-decoration: none;
     font-family: "Poppins";
     color: var(--text-color);
     /* margin-top: 2em; */
     font-size: 1.01rem;  
-    padding: 1.1em;
+    padding: .7em 1em;
 }
 
 .container > a:hover{
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color-dark);
+}
+
+.container > a.active {
+    background-color: var(--primary-color-dark);
 }

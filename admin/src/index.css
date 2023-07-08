@@ -8,14 +8,21 @@ body {
 }
 
 :root {
-  --main-color: #d36500;
-  --primary-color: #b35a07;
+  --primary-color: hsl(29, 100%, 41%);
+  --primary-color-light: hsl(29, 94%, 49%);
+  --primary-color-dark: hsl(29, 100%, 36%);
   --secondary-color: #343434;
   --hover-color: #171717;
   --text-color: #fff;
   --primary-text-color: #000;
   --tertiary-color: #767676;
   --border-color: #c3c3c3;
+
+  --primary-gradient: linear-gradient(
+    90deg,
+    var(--primary-color) 0%,
+    var(--primary-color-light) 100%
+  );
 }
 
 .button_flex {
@@ -40,7 +47,7 @@ a {
 }
 
 span {
-  color: red;
+  /* color: red; */
 }
 
 .heading {
