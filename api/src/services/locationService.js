@@ -26,7 +26,6 @@ async function getLocations() {
   try {
     const query = 'SELECT * FROM brms.locations ORDER BY "id" ASC';
     const { rows } = await pool.query(query);
-    console.log(rows);
     return rows;
   } catch (error) {
     console.log(error)
@@ -48,7 +47,6 @@ async function editLocation(location) {
       location.id,
     ];
     const { rows } = await pool.query(query, values);
-    console.log(rows);
     if (rows.length === 0) return null;
     return rows[0];
   } catch (error) {
@@ -57,10 +55,33 @@ async function editLocation(location) {
   }
 }
 
+async function deleteLocation(locationId) {
+  try {
+    const query =
+      'DELETE FROM brms.locations WHERE "id" = $1 RETURNING *';
+    const values = [locationId];
+    const { rows } = await pool.query(query, values);
+    if (rows.length === 0) return null;
+    return rows[0];
+  } catch (error) {
+    // if (error.code === "23503") {
+    //   return res
+    //     .status(400)
+    //     .json(new ErrorResponse({ message: "Location is in use" }));
+    // }
+     
+
+    console.log(error);
+    throw new Error("Failed to delete location");
+  }
+}
+
+
 module.exports = {
   createLocation,
   getLocations,
   editLocation,
+  deleteLocation,
 };
 
 // I need to edit location,

@@ -10,7 +10,6 @@ const createTables = async () => {
         city TEXT NOT NULL,
         lcda TEXT NOT NULL,
         area TEXT NOT NULL,
-        town TEXT NOT NULL
       )`);
 
     // await pool.query(
@@ -22,8 +21,8 @@ const createTables = async () => {
         name TEXT NOT NULL,
         title TEXT NOT NULL,
         description TEXT NOT NULL,
-        busStop TEXT NOT NULL,
-        locationId TEXT REFERENCES brms.locations(id),
+        "busStop" TEXT NOT NULL,
+        "locationId" TEXT REFERENCES brms.locations(id),
         code TEXT NOT NULL,
         status status
       )`);

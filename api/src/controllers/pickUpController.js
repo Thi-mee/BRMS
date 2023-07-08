@@ -8,62 +8,44 @@ const pickUpService = require("../services/pickUpService");
 const locationService = require("../services/locationService");
 const { SuccessResponse } = require("../lib/pickup");
 
+const handleValidationError = (res, errors) => {
+  return res
+    .status(400)
+    .json(new ErrorResponse({ message: errors.map((i) => i.message).join(", ") }));
+}
+
 const addPickUp = async (req, res, next) => {
-  console.log({initial: req.body})
-  if (!req.body.locationId) {
+  let isLocationCreated = false;
+  if (!req.body.locationId || (req.body.locationId && !req.body.location)) {
+
     const errors = locationValidator.validate(req.body.location);
-    if (errors.length > 0) {
-      return res
-        .status(400)
-        .json(new ErrorResponse({ message: errors.join(", ") }));
-    }
-    req.body.location.id = generateUniqueId();
-    try {
-      const newLocationId = await locationService.createLocation(
+    if (errors.length > 0) return handleValidationError(res, errors);
+
+    req.body.location.id = req.body.location.id || generateUniqueId();
+    req.body.action = req.body.locationId ? "edit" : "add";
+    
+    if (!req.body.locationId) {
+      await locationService.createLocation(
         req.body.location
       );
-      req.body.locationId = newLocationId;
-    } catch (err) {
-      console.log(err);
-    }
-  } 
-  else if (req.body.locationId && req.body.location) {
-    const errors = locationValidator.validate(req.body.location);
-    if (errors.length > 0) {
-      return res
-        .status(400)
-        .json(new ErrorResponse({ message: errors.join(", ") }));
-    }
-    req.body.location.id = generateUniqueId();
-    try {
-      const editedLocation = await locationService.editLocation(
-        req.body.location
-      );
-      // console.log(editedLocation);
-      req.body.locationId = editedLocation.id;
-    } catch (error) {
-      console.log(error);
+      req.body.locationId = req.body.location.id
     }
   }
-  console.log({mid: req.body})
-  delete req.body.location;
+
   req.body.id = generateUniqueId();
   req.body.code = generateCode(req.body.name);
-  // console.log(req.body)
   const errors = pickUpValidator.validate(req.body);
-  if (errors.length > 0) {
-    return res
-      .status(400)
-      .json(
-        new ErrorResponse({ message: errors.map((i) => i.message).join(", ") })
-      );
-  }
+  if (errors.length > 0) return handleValidationError(res, errors);
+
   try {
     const retVal = await pickUpService.addPickUp(req.body);
-    if (retVal === null)
-      return res
-        .status(400)
-        .json(new ErrorResponse({ message: "Failed to add new pickup" }));
+    isLocationCreated = true;
+    if (req.body.action === "edit") {
+      await locationService.editLocation(
+        req.body.location
+      );
+    }
+
     return res
       .status(201)
       .json(
@@ -73,8 +55,21 @@ const addPickUp = async (req, res, next) => {
         })
       );
   } catch (error) {
-    console.log(error);
-    return res.status(500).json(new ErrorResponse({ message: error.message }));
+    if (isLocationCreated) {
+      await locationService.deleteLocation(req.body.locationId);
+    }
+
+    if (error.code === "42703") {
+      return res
+        .status(400)
+        .json(new ErrorResponse({ message: "Location isn't valid" }));
+    }
+    if (error.code === "23505") {
+      return res
+        .status(400)
+        .json(new ErrorResponse({ message: "Pick Up Point already exists" }));
+    }
+    next(error);
   }
 };
 

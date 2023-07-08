@@ -21,7 +21,7 @@ app.use(
   })
 );
 
-setUpDb()
+// setUpDb()
 require('./config/passport')(app, passport);
 
 require('./routes')(app);
