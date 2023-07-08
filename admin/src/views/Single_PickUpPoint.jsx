@@ -3,28 +3,25 @@ import AppForm from "../components/Common/Form/AppForm";
 import AppModal from "../components/Common/BRMS_Modal/AppModal";
 import { useDispatch, useSelector } from "react-redux"
 import { singlePickUpModal } from "../components/Common/Table/LocationTable";
-import { getAllLocations, getLocationStatus, getLocationError } from "../store/selectors";
+import { getAllLocations, getLocationStatus } from "../store/selectors";
 import { fetchAllLocations } from "../store/thunks/locationThunks";
-import { useFormUtils } from "../components/utils/FormUtils";
-import { locationFormInit } from "../models/Picup";
-
 
 const Single_PickUpPoint = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const [errors, setErrors] = useState({});
-  const [locationError, setLocationError] = useState({});
+  const errors = {};
+  const locationError = {};
   const dispatch = useDispatch();
   const locations = useSelector(getAllLocations);
   const locationStatus = useSelector(getLocationStatus);
-  const [locationObj, setLocationObj] = useState({});
-  const [select, setSelect] = useState(false)
-  // const { initLocForm } = useFormUtils();
+  const [select, setSelect] = useState(false);
+  const [value, setValue] = useState({})
 
   const selectLocation = (form) => {
-    setSelect(true)
-    setLocationObj(form);
+    setSelect(true);
+    setValue(form)
+    console.log(value)
   }
 
   useEffect(() => {
@@ -49,7 +46,6 @@ const Single_PickUpPoint = () => {
           errors={errors}
           locationError={locationError}
           handleShow={handleShow}
-          setLocationObj={locationObj}
           select={select}
           setSelect={setSelect}
         />

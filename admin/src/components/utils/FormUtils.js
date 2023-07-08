@@ -103,10 +103,8 @@ export const useFormUtils = () => {
 
   const initLocForm = (form) => {
     console.log(form);
-    setLocationForm(form)
+    setLocationForm(form);
   }
-
-
 
   return {
     handleValueChange,
