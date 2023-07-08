@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { Form, Col, Row, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useFormUtils } from "../../utils/FormUtils";
@@ -9,14 +9,15 @@ const AppForm = ({
   errors,
   locationError,
   handleShow,
-  select
+  select,
+  value
 }) => {
   const navigate = useNavigate();
   const { handleValueChange, form, locationForm, setLocationForm, handleValueLocationChange, initLocForm } = useFormUtils();
-  const [addRequestStatus, setAddRequestStatus] = useState('idle');
   const dispatch = useDispatch();
 
-  // select ? initLocForm() : ""
+
+  // Object.keys(value).length > 0 ? initLocForm(value) : initLocForm({})
 
   const handleThis = (e) => {
     e.preventDefault();
@@ -24,10 +25,11 @@ const AppForm = ({
     form.status === true ? form.status = "active" : form.status = "inactive"
     console.log(form)
 
-
     dispatch(addPickUpPoints(form))
 
   }
+
+  console.log(value);
 
 
 
