@@ -1,7 +1,7 @@
 import React from "react";
 import {NavLink} from "react-router-dom";
 import style from "../../styles/Navbar.module.css";
-import { Button } from "../../components/Common/Button/Button";
+import { Button } from "../Common/Button/Button";
 import ButtonOutline from "./Button/ButtonOutline";
 import { useNavigate } from "react-router-dom";
 // import { usePageUtils } from "../utils/PageUtils";

@@ -1,28 +1,29 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import style from "../styles/PckUpPointRegMgt.module.css";
+import style from "../../styles/PckUpPointRegMgt.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPickupPoints } from "../store/thunks/pickUpPointThunks";
-import {
-  getAllPickUps,
-  getAllPickUpsStatus,
-  getAllPickUpError,
-} from "../store/selectors";
-import Tables from "../components/Common/Table/Table";
-import Button from "../components/Common/Button/Button";
+import { fetchPickupPoints } from "../../store/thunks/pickUpPointThunks";
+import { getAllPickUps, getAllPickUpsStatus } from "../../store/selectors";
+import Tables from "../../components/Table/Table";
+import Button from "../../components/Button/Button";
+import { getLocationsData } from "../../store/selectors";
+import { fetchAllLocations } from "../../store/thunks/locationThunks";
 
-const Pick_Up_Point = () => {
+const PickupPointMgt = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const pickUpPoints = useSelector(getAllPickUps);
-  const pickUpPointError = useSelector(getAllPickUpError);
   const pickUpPointStatus = useSelector(getAllPickUpsStatus);
+  const { locations, status } = useSelector(getLocationsData);
 
   useEffect(() => {
     if (pickUpPointStatus === "idle") {
       dispatch(fetchPickupPoints());
     }
-  }, [dispatch, pickUpPointStatus]);
+    if (status === "idle") {
+      dispatch(fetchAllLocations());
+    }
+  }, [dispatch, pickUpPointStatus, status, locations]);
 
   const goToSinglePickUpPoint = () => {
     navigate("/pick_up_points/add-single");
@@ -34,10 +35,21 @@ const Pick_Up_Point = () => {
 
   return (
     <div className="page">
-      <h1 className="mb-3 mt-2">Pick Up Points</h1>
+      <div className="heading mb-3">
+        <h1 className="mb-3 mt-2">Pick Up Points</h1>
+        {pickUpPoints.length > 0 && (
+          <div className="btn-flex">
+            <Button onClick={goToSinglePickUpPoint}>Add a Pick Up Point</Button>
+            <Button variant="outline-primary" onClick={goToBulkPickUpPoints}>
+              Add Multiple Pick Up Points
+            </Button>
+          </div>
+        )}
+      </div>
+
       {pickUpPoints.length === 0 ? (
         <>
-          <div className={style.emptyContainer}>
+          <div className="emptyContainer">
             <img
               src="/assets/illustrations/empty_list.png"
               alt=""
@@ -56,19 +68,10 @@ const Pick_Up_Point = () => {
           </div>
         </>
       ) : (
-        <>
-          <div className={style.floatingButtons}>
-            <Button onClick={goToSinglePickUpPoint}>Add a Pick Up Point</Button>
-            <Button variant="outline-primary" onClick={goToBulkPickUpPoints}>
-              Add Multiple Pick Up Points
-            </Button>
-          </div>
-
-          <Tables pickUpPoints={pickUpPoints} />
-        </>
+        <Tables pickUpPoints={pickUpPoints} />
       )}
     </div>
   );
 };
 
-export default React.memo(Pick_Up_Point);
+export default React.memo(PickupPointMgt);

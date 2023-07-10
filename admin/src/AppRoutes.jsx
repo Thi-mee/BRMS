@@ -1,10 +1,12 @@
 import React from "react";
 import { createBrowserRouter } from "react-router-dom";
-import HomePage from "../../../views/HomePage";
-import PickUpPointRegMgt from "../../../views/Pick-Up_Point_Reg_Mgt";
-import SinglePickUpPoint from "../../../views/Single_PickUpPoint";
-import BulkPickUpPoints from "../../../views/Bulk_PickUpPoints";
-import Layout from "../Layout/Layout";
+import HomePage from "./views/HomePage";
+import PickUpPointMgt from "./views/PickupPoints/PickUpPointMgt";
+import SinglePickUpPoint from "./views/PickupPoints/Single_PickUpPoint";
+import BulkPickUpPoints from "./views/PickupPoints/Bulk_PickUpPoints";
+import Layout from "./components/Layout/Layout";
+import LocationsMgtPage from "./views/Locations/LocationsMgtPage";
+
 
 export const router = createBrowserRouter([
   {
@@ -16,7 +18,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/pick_up_points",
-        element: <PickUpPointRegMgt />,
+        element: <PickUpPointMgt />,
       },
       {
         path: "/pick_up_points/add-single",
@@ -26,6 +28,10 @@ export const router = createBrowserRouter([
         path: "/pick_up_points/add-bulk",
         element: <BulkPickUpPoints />,
       },
+      {
+        path: "/locations",
+        element: <LocationsMgtPage />,
+      }
     ],
   },
 ]);

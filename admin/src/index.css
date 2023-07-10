@@ -40,16 +40,6 @@ a {
   color: var(--primary-text-color);
 }
 
-
-.component_container {
-  display: flex;
-  font-family: "Poppins";
-}
-
-span {
-  /* color: red; */
-}
-
 .heading {
   display: flex;
   align-items: center;
@@ -69,13 +59,7 @@ span {
 }
 
 .button_container {
-  /* margin-left: 20em; */
-  /* border: 1px solid red; */
   display: flex;
-  gap: 1em;
-  width: 100%;
-  justify-content: flex-end;
-  align-items: flex-end;
 }
 
 .bulktable_icons {
@@ -93,14 +77,49 @@ Modal {
   width: 90%;
 }
 
-
-
-
-
-
 .page {
   padding: 1em;
   max-width: 980px;
   margin: 0 auto;
   min-height: 100%;
+}
+
+.edit_icon {
+  color: green;
+  cursor: pointer;
+  font-size: 1.3rem;
+}
+
+.required-label::after {
+  content: "*";
+  color: rgb(255, 56, 56);
+  margin-left: 5px;
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.btn-flex {
+  display: flex;
+  gap: 0.5em;
+}
+
+.file_input {
+  max-width: 40%;
+}
+
+.flex {
+  display: flex;
+}
+
+.emptyContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: -2em;
 }

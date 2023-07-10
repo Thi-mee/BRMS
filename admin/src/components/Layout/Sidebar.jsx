@@ -10,10 +10,10 @@ const Sidebar = () => {
         </span>
       <NavLink>Dashboard</NavLink>
       <NavLink>Route Mgt</NavLink>
-      <NavLink to="/pick_up_points" className={({isActive}) => isActive && style.active}>
+      <NavLink to="/pick_up_points" className={({isActive}) => isActive ? style.active : ''}>
         Pick Up Point Mgt
       </NavLink>
-      <NavLink>Location</NavLink>
+      <NavLink to="/locations">Location</NavLink>
       <NavLink>Authorization Workflow</NavLink>
     </div>
   );

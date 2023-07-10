@@ -73,6 +73,78 @@ const addPickUp = async (req, res, next) => {
   }
 };
 
+const addBulkPickups = async (req, res, next) => {
+  const { body } = req;
+
+  if (!Array.isArray(body)) {
+    return res.status(400).json(new ErrorResponse({ message: 'Invalid request body. Expected an array.' }));
+  }
+
+  const pickupPromises = body.map(async (pickup) => {
+    if (!pickup.locationId || (pickup.locationId && !pickup.location)) {
+      const errors = locationValidator.validate(pickup.location);
+      if (errors.length > 0) {
+        return { success: false, error: errors.map((i) => i.message).join(', ') };
+      }
+
+      pickup.location.id = pickup.location.id || generateUniqueId();
+      pickup.action = pickup.locationId ? 'edit' : 'add';
+
+      if (!pickup.locationId) {
+        await locationService.createLocation(pickup.location);
+        pickup.locationId = pickup.location.id;
+      }
+    }
+
+    pickup.id = generateUniqueId();
+    pickup.code = generateCode(pickup.name);
+    const errors = pickUpValidator.validate(pickup);
+    if (errors.length > 0) {
+      return { success: false, error: errors.map((i) => i.message).join(', ') };
+    }
+
+    try {
+      const retVal = await pickUpService.addPickUp(pickup);
+      if (pickup.action === 'edit') {
+        await locationService.editLocation(pickup.location);
+      }
+      return { success: true, data: retVal };
+    } catch (error) {
+      if (pickup.action === 'add') {
+        await locationService.deleteLocation(pickup.locationId);
+      }
+
+      if (error.code === '42703') {
+        return { success: false, error: "Location isn't valid" };
+      }
+      if (error.code === '23505') {
+        return { success: false, error: 'Pick Up Point already exists' };
+      }
+      throw error;
+    }
+  });
+
+  try {
+    const results = await Promise.all(pickupPromises);
+    const successfulResults = results.filter((result) => result.success);
+    const failedResults = results.filter((result) => !result.success);
+
+    if (successfulResults.length > 0) {
+      return res.status(201).json(new SuccessResponse({ data: successfulResults.map((result) => result.data) }));
+    }
+
+    if (failedResults.length > 0) {
+      return res.status(400).json(new ErrorResponse({ message: failedResults.map((result) => result.error).join(', ') }));
+    }
+
+    return res.status(400).json(new ErrorResponse({ message: 'Failed to add bulk pickups' }));
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(new ErrorResponse({ message: error.message }));
+  }
+};
+
+
 const editPickUp = async (req, res, next) => {
   const errors = pickUpValidator.validate(req.body);
   if (errors.length > 0) {
@@ -152,4 +224,8 @@ module.exports = {
   getPickUpPoints,
   getPickUp,
   editPickUp,
+  addBulkPickups
 };
+
+
+

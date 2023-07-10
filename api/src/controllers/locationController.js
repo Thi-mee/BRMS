@@ -15,22 +15,37 @@ const getLocations = async (req, res, next) => {
 
 const editLocation = async (req, res, next) => {
     const errors = locationValidator.validate(req.body);
-    if(errors.length > 0){
-        return res.status(400).json(new ErrorResponse({ message: errors.join(', ')}));
+    if (errors.length > 0) {
+        return res.status(400).json(new ErrorResponse({ message: errors.join(', ') }));
     }
-    try{
+    try {
         const retVal = await locationService.editLocation(req.body);
-        if(retVal === null){
-            return res.status(400).json(new ErrorResponse({ message: 'Failed to edit location'}));
+        if (retVal === null) {
+            return res.status(400).json(new ErrorResponse({ message: 'Failed to edit location' }));
         }
-        return res.status(200).json(new SuccessResponse({ data: retVal, message: 'Location edited successfully'}));
-    } catch(error){
+        return res.status(200).json(new SuccessResponse({ data: retVal, message: 'Location edited successfully' }));
+    } catch (error) {
         console.log(error);
-
+        return res.status(500).json(new ErrorResponse({ message: 'Failed to edit location' }));
     }
-}
+};
+
+const deleteLocation = async (req, res, next) => {
+    try {
+        const { locationId } = req.params;
+        const retVal = await locationService.deleteLocation(locationId);
+        if (retVal === null) {
+            return res.status(400).json(new ErrorResponse({ message: 'Failed to delete location' }));
+        }
+        return res.status(200).json(new SuccessResponse({ message: 'Location deleted successfully' }));
+    } catch (error) {
+        return res.status(409).json(new ErrorResponse({ message: error.message || 'Failed to delete location' }));
+    }
+};
+
 
 module.exports = {
     getLocations,
-    editLocation
+    editLocation,
+    deleteLocation
 }

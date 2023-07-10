@@ -64,13 +64,9 @@ async function deleteLocation(locationId) {
     if (rows.length === 0) return null;
     return rows[0];
   } catch (error) {
-    // if (error.code === "23503") {
-    //   return res
-    //     .status(400)
-    //     .json(new ErrorResponse({ message: "Location is in use" }));
-    // }
-     
-
+    if (error.code === "23503") {
+      throw new Error("Location is in use");
+    }
     console.log(error);
     throw new Error("Failed to delete location");
   }

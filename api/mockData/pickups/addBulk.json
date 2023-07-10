@@ -1,0 +1,32 @@
+{
+  "req": {
+    "body": {
+      "pickupPoints": {
+        "addwithExistingLocation": {
+          "name": "",
+          "title": "",
+          "description": "",
+          "busStop": "",
+          "status": "",
+          "locationId": ""
+        },
+        "addwithNewLocation": {
+          "name": "string",
+          "title": "string",
+          "description": "string",
+          "busStop": "string",
+          "code": "string",
+          "status": 1,
+          "location": {
+            "title": "string",
+            "lcda": "string",
+            "city": "string",
+            "area": "string",
+            "description": "string",
+            "landmark": "string"
+          }
+        }
+      }
+    }
+  }
+}
