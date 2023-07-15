@@ -1,11 +1,10 @@
 import React from "react";
-import { Form, Col, Row, Alert } from "react-bootstrap";
+import { Form, Col, Row } from "react-bootstrap";
 import { InputField, TextAreaField } from "./Fields";
 
-const LocationForm = ({errors, form, handleValueChange, serverError}) => {
+const LocationForm = ({errors, form, handleValueChange}) => {
   return (
     <Form>
-    <Alert variant="danger" show={serverError} dismissible>{serverError}</Alert>
       <Row className="mb-3">
         <InputField
           as={Col}
@@ -13,6 +12,7 @@ const LocationForm = ({errors, form, handleValueChange, serverError}) => {
           controlId="validationCustom01"
           label="Title"
           name="title"
+          readOnly={form.id ? true : false}
           placeholder="Please enter a title"
           value={form.title}
           onChange={handleValueChange}

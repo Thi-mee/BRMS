@@ -1,15 +1,24 @@
-import React, { useState } from "react";
-import { Button, Table } from "react-bootstrap";
+import React, { memo, useEffect, useState } from "react";
+import { Table } from "react-bootstrap";
 
 const XPTable = ({
   titles,
   renderitem,
   data,
-  noOfButtons,
-  renderBtn,
+  serial,
+  select,
   selectMultiple,
+  onSelect,
+  ...rest
 }) => {
   const [selectedRows, setSelectedRows] = useState([]);
+  
+  useEffect(() => {
+    if (onSelect && typeof onSelect === "function")
+      onSelect(selectedRows.map((rowIndex) => data[rowIndex]));
+    else if (onSelect && typeof onSelect !== "function")
+      console.error("onSelect must be a function");
+  }, [selectedRows, onSelect, data]);
 
   const handleRowSelect = (rowId) => {
     if (selectedRows.includes(rowId)) {
@@ -40,10 +49,11 @@ const XPTable = ({
   };
 
   return (
-    <Table>
+    <Table {...rest}>
       <thead>
         <tr>
-          {
+          {serial && <th>S/N</th>}
+          {select && (
             <th>
               {selectMultiple && (
                 <input
@@ -53,32 +63,32 @@ const XPTable = ({
                 />
               )}
             </th>
-          }
+          )}
           {titles?.map((title, index) => (
-            <th key={index}>{title}</th>
+            <th key={index} className="text-ellipsis">
+              {title}
+            </th>
           ))}
         </tr>
       </thead>
       <tbody>
         {data?.map((row, rowIndex) => (
           <tr key={rowIndex}>
-            {/* {selectedRows.length > 0 && ( */}
-            <td>
-              <input
-                type="checkbox"
-                checked={selectedRows.includes(rowIndex)}
-                onChange={() => handleCheck(rowIndex)}
-              />
-            </td>
-            {/* )} */}
-            {renderitem && renderitem(row, rowIndex)}
-            <td className="d-flex gap-2">
-              {noOfButtons &&
-                renderBtn &&
-                new Array(noOfButtons)
-                  .fill(<Button />)
-                  .map((_, index) => renderBtn(index, rowIndex, row))}
-            </td>
+            {serial && <td>{rowIndex + 1}</td>}
+            {select && (
+              <td>
+                <input
+                  type="checkbox"
+                  checked={selectedRows.includes(rowIndex)}
+                  onChange={() => handleCheck(rowIndex)}
+                />
+              </td>
+            )}
+            {renderitem
+              ? renderitem(row, rowIndex)
+              : Object.values(row).map((item, index) => (
+                  <td key={index}>{item}</td>
+                ))}
           </tr>
         ))}
       </tbody>
@@ -86,7 +96,7 @@ const XPTable = ({
   );
 };
 
-export default XPTable;
+export default memo(XPTable);
 
 // {/* <XPTable
 //   titles={["Name", "Age", "Gender"]}

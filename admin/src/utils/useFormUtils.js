@@ -1,107 +1,117 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState, useMemo } from "react";
+import { convertNestedToNotNested, convertNotNestedToNested } from "./conversions";
 
 
 export const useFormUtils = (initialState, validationRules) => {
-  const [form, setForm] = useState(initialState);
+  const [values, setValues] = useState(() => convertNestedToNotNested(initialState));
   const initialFormState = useRef(initialState);
   const validationRulesRef = useRef(validationRules);
   const [errors, setErrors] = useState({});
 
-  const handleValueChange = (e) => {
-    const { name, value } = e.target;
 
-    if (name.includes('.')) {
-      console.log(name, value);
-      const [parent, child] = name.split('.');
-      setForm((prevForm) => ({ ...prevForm, [parent]: { ...prevForm[parent], [child]: value } }));
-      if (!!errors[name]) {
-        setErrors((prevErrors) => ({ ...prevErrors, [parent]: { ...prevErrors[parent], [child]: null } }));
-      }
-    } else {
-      setForm({ ...form, [name]: value });
+  const handleValueChange = useCallback((e) => {
+    const { name, value, type, checked } = e.target;
+    const isOwnProperty = values.hasOwnProperty(name);
+    if (!!isOwnProperty) {
+      const newValue = type === 'checkbox' ? checked : value;
+      setValues((prevValues) => ({
+        ...prevValues,
+        [name]: newValue,
+      }));
       if (!!errors[name]) {
         setErrors((prevErrors) => ({ ...prevErrors, [name]: null }));
       }
-    };
-  };
+    }
+  }, [errors, values]);
 
-
-  const validateSubmission = (e) => {
-    e && e.preventDefault();
-    const newErrors = new Map();
+  const validateForm = useCallback(() => {
+    const newErrors = {}
 
     validationRulesRef.current.forEach((rule) => {
-      const value = form[rule.name] || form[rule.name.split('.')[0]][rule.name.split('.')[1]];
-
-      if (rule.name.includes('.')) {
-        const [parent, child] = rule.name.split('.');
-
-        if (!value || value === "") {
-          newErrors.set(parent, { ...newErrors.get(parent), [child]: `Kindly Supply ${rule.label}!` })
-        }
-        else if (value.length < rule.minLength) {
-          newErrors.set(parent, { ...newErrors.get(parent), [child]: `${rule.label} is too short!` })
-        }
-        else if (value.length > rule.maxLength) {
-          newErrors.set(parent, { ...newErrors.get(parent), [child]: `${rule.label} is too long!` })
-        }
-      } else {
-        if (!value || value === "") {
-          newErrors.set(rule.name, `Kindly Supply ${rule.label}!`);
-        }
-        else if (value.length < rule.minLength) {
-          newErrors.set(rule.name, `${rule.label} is too short!`);
-        }
-        else if (value.length > rule.maxLength) {
-          newErrors.set(rule.name, `${rule.label} is too long!`);
-        }
+      const value = values[rule.name];
+      if (!value || value === "") {
+        newErrors[rule.name] = `Kindly Supply ${rule.label}!`
+      }
+      else if (value.trim().length < rule.minLength) {
+        newErrors[rule.name] = `${rule.label} is too short!`
+      }
+      else if (rule.pattern && !rule.pattern.test(value.trim())) {
+        newErrors[rule.name] = `${rule.label} is invalid!`
+      }
+      else if (value.trim().length > rule.maxLength) {
+        newErrors[rule.name] = `${rule.label} is too long!`
       }
     });
 
-    if (newErrors.size > 0) {
-      setErrors(Object.fromEntries(newErrors));
-      return false;
-    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }, [values]);
 
-    return true;
-  };
-
-
-  const initForm = (formdata, newValidationRules) => {
+  const initForm = useCallback((formdata, newValidationRules) => {
     if (formdata) {
-      setForm(formdata);
+      setValues(convertNestedToNotNested(formdata));
       validationRulesRef.current = newValidationRules ?? validationRulesRef.current;
       initialFormState.current = formdata;
     }
     else {
-      setForm(initialFormState.current);
+      setValues(convertNestedToNotNested(initialFormState.current));
       setErrors({});
     }
-  };
+  }, []);
 
-  const setFormValues = (object) => {
-    setForm((prevForm) => ({ ...prevForm, ...object }));
+  const setFields = useCallback((fields) => {
+    setValues((prevValues) => ({
+      ...prevValues,
+      ...fields,
+    }));
 
-    // set errors on object passes to null
-    const newErrors = new Map();
-    Object.keys(object).forEach((key) => {
+    // set errors on fields passes to null
+    const newErrors = {}
+    Object.keys(fields).forEach((key) => {
       if (!!errors[key]) {
-        newErrors.set(key, {});
+        newErrors[key] = null;
       }
+    });
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(prevErrors => ({ ...prevErrors, ...newErrors }));
     }
-    );
-    if (newErrors.size > 0) {
-      setErrors(prevErrors => ({ ...prevErrors, ...Object.fromEntries(newErrors) }));
-    }
-  };
+  }, [errors]);
 
-  return {
-    handleValueChange,
-    form,
+  const getFormattedValues = useCallback(() => {
+    const formattedValues = {};
+    Object.keys(values).forEach((key) => {
+      formattedValues[key] = values[key];
+    });
+    return convertNotNestedToNested(formattedValues);
+  }, [values]);
+  
+  const valuesChanged = useCallback(() => {
+    const formattedValues = getFormattedValues();
+    return JSON.stringify(formattedValues) !== JSON.stringify(initialFormState.current);
+  }, [getFormattedValues]);
+
+
+  const passedDownValues = useMemo(() => {
+    return {
+      values,
+      errors,
+      handleValueChange,
+      validateForm,
+      initForm,
+      setFields,
+      getFormattedValues,
+      valuesChanged
+    };
+  }, [
+    values,
     errors,
+    handleValueChange,
+    validateForm,
     initForm,
-    setFormValues,
-    validateSubmission,
-  };
-};
+    setFields,
+    getFormattedValues,
+    valuesChanged
+  ])
 
+  return passedDownValues;
+};

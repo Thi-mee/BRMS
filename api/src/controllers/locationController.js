@@ -1,6 +1,7 @@
 const { ErrorResponse, SuccessResponse } = require('../lib/location');
 const { locationValidator } = require('../lib/validationRules');
 const locationService = require('../services/locationService');
+const { generateUniqueId } = require("../lib/utils");
 
 const getLocations = async (req, res, next) => {
     try{
@@ -37,15 +38,35 @@ const deleteLocation = async (req, res, next) => {
         if (retVal === null) {
             return res.status(400).json(new ErrorResponse({ message: 'Failed to delete location' }));
         }
-        return res.status(200).json(new SuccessResponse({ message: 'Location deleted successfully' }));
+        return res.status(200).json(new SuccessResponse({ message: 'Location deleted successfully', data: retVal }));
     } catch (error) {
-        return res.status(409).json(new ErrorResponse({ message: error.message || 'Failed to delete location' }));
+        console.log(error)
+        return res.status(409).json(new ErrorResponse({ message: 'Location is in use' }));
     }
 };
+
+const addLocation = async (req, res, next) => {
+    const errors = locationValidator.validate(req.body);
+    if (errors.length > 0) {
+        return res.status(400).json(new ErrorResponse({ message: errors.join(', ') }));
+    }
+    req.body.id = generateUniqueId();
+    try {
+        const retVal = await locationService.createLocation(req.body);
+        if (retVal === null) {
+            return res.status(400).json(new ErrorResponse({ message: 'Failed to add location' }));
+        }
+        return res.status(200).json(new SuccessResponse({ data: retVal, message: 'Location added successfully' }));
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(new ErrorResponse({ message: 'Failed to add location' }));
+    }
+}
 
 
 module.exports = {
     getLocations,
     editLocation,
-    deleteLocation
+    deleteLocation,
+    addLocation
 }

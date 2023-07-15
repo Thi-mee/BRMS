@@ -16,20 +16,17 @@ const handleValidationError = (res, errors) => {
 
 const addPickUp = async (req, res, next) => {
   let isLocationCreated = false;
-  if (!req.body.locationId || (req.body.locationId && !req.body.location)) {
-
+  if (req.body.location) {
     const errors = locationValidator.validate(req.body.location);
     if (errors.length > 0) return handleValidationError(res, errors);
 
-    req.body.location.id = req.body.location.id || generateUniqueId();
-    req.body.action = req.body.locationId ? "edit" : "add";
-    
-    if (!req.body.locationId) {
-      await locationService.createLocation(
-        req.body.location
-      );
-      req.body.locationId = req.body.location.id
-    }
+    req.body.location.id = generateUniqueId();
+    await locationService.createLocation(
+      req.body.location
+    );
+    isLocationCreated = true;
+    req.body.locationId = req.body.location.id
+    delete req.body.location;
   }
 
   req.body.id = generateUniqueId();
@@ -39,13 +36,6 @@ const addPickUp = async (req, res, next) => {
 
   try {
     const retVal = await pickUpService.addPickUp(req.body);
-    isLocationCreated = true;
-    if (req.body.action === "edit") {
-      await locationService.editLocation(
-        req.body.location
-      );
-    }
-
     return res
       .status(201)
       .json(
@@ -58,69 +48,43 @@ const addPickUp = async (req, res, next) => {
     if (isLocationCreated) {
       await locationService.deleteLocation(req.body.locationId);
     }
-
-    if (error.code === "42703") {
-      return res
-        .status(400)
-        .json(new ErrorResponse({ message: "Location isn't valid" }));
-    }
-    if (error.code === "23505") {
-      return res
-        .status(400)
-        .json(new ErrorResponse({ message: "Pick Up Point already exists" }));
-    }
-    next(error);
+    return res.status(409).json(new ErrorResponse({ message: error.message }));
   }
 };
 
 const addBulkPickups = async (req, res, next) => {
   const { body } = req;
+  const bulkErrors = [];
 
   if (!Array.isArray(body)) {
     return res.status(400).json(new ErrorResponse({ message: 'Invalid request body. Expected an array.' }));
   }
 
   const pickupPromises = body.map(async (pickup) => {
-    if (!pickup.locationId || (pickup.locationId && !pickup.location)) {
+    if (pickup.location) {
       const errors = locationValidator.validate(pickup.location);
-      if (errors.length > 0) {
-        return { success: false, error: errors.map((i) => i.message).join(', ') };
-      }
-
-      pickup.location.id = pickup.location.id || generateUniqueId();
-      pickup.action = pickup.locationId ? 'edit' : 'add';
-
-      if (!pickup.locationId) {
+      if (errors.length > 0) return handleValidationError(res, errors);
+      pickup.location.id = generateUniqueId();
+      try {
         await locationService.createLocation(pickup.location);
         pickup.locationId = pickup.location.id;
+        delete pickup.location;
+      } catch (error) {
+        bulkErrors.push({ success: false, error: error.message });
       }
     }
 
     pickup.id = generateUniqueId();
     pickup.code = generateCode(pickup.name);
     const errors = pickUpValidator.validate(pickup);
-    if (errors.length > 0) {
-      return { success: false, error: errors.map((i) => i.message).join(', ') };
-    }
+    if (errors.length > 0) bulkErrors.push({ success: false, error: errors.map((i) => i.message).join(', ') });
 
     try {
       const retVal = await pickUpService.addPickUp(pickup);
-      if (pickup.action === 'edit') {
-        await locationService.editLocation(pickup.location);
-      }
       return { success: true, data: retVal };
     } catch (error) {
-      if (pickup.action === 'add') {
-        await locationService.deleteLocation(pickup.locationId);
-      }
-
-      if (error.code === '42703') {
-        return { success: false, error: "Location isn't valid" };
-      }
-      if (error.code === '23505') {
-        return { success: false, error: 'Pick Up Point already exists' };
-      }
-      throw error;
+      await locationService.deleteLocation(pickup.locationId);
+      return { success: false, error: error.message };
     }
   });
 
@@ -129,17 +93,16 @@ const addBulkPickups = async (req, res, next) => {
     const successfulResults = results.filter((result) => result.success);
     const failedResults = results.filter((result) => !result.success);
 
-    if (successfulResults.length > 0) {
-      return res.status(201).json(new SuccessResponse({ data: successfulResults.map((result) => result.data) }));
+    const response = {
+      status: successfulResults.length > 0 ? 'success' : 'failed',
+      message: 'Bulk pickups added successfully' + (failedResults.length > 0 ? '. Failed to add ' + failedResults.length + ' pickups' : ''),
+      data: successfulResults.map((result) => result.data)
     }
 
-    if (failedResults.length > 0) {
-      return res.status(400).json(new ErrorResponse({ message: failedResults.map((result) => result.error).join(', ') }));
-    }
-
-    return res.status(400).json(new ErrorResponse({ message: 'Failed to add bulk pickups' }));
+    return res.status(
+      successfulResults.length > 0 ? 201 : 400
+    ).json(response);
   } catch (error) {
-    console.log(error);
     return res.status(500).json(new ErrorResponse({ message: error.message }));
   }
 };
@@ -168,7 +131,6 @@ const editPickUp = async (req, res, next) => {
         })
       );
   } catch (error) {
-    console.log(error);
     return res.status(500).json(new ErrorResponse({ message: error.message }));
   }
 };
@@ -182,7 +144,6 @@ const getPickUp = async (req, res, next) => {
         .json(new ErrorResponse({ message: "Failed to get pick up" }));
     return res.status(200).json(new SuccessResponse({ data: retVal }));
   } catch (error) {
-    console.log(error);
     return res.status(500).json(new ErrorResponse({ message: error.message }));
   }
 };
@@ -196,7 +157,6 @@ const getPickUpPoints = async (req, res, next) => {
         .json(new ErrorResponse({ message: "Failed to get pick up points" }));
     return res.status(200).json(new SuccessResponse({ data: retVal }));
   } catch (error) {
-    console.log(error);
     return res.status(500).json(new ErrorResponse({ message: error.message }));
   }
 };

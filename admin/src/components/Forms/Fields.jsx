@@ -25,6 +25,8 @@ export const InputField = ({
   error,
   placeholder,
   required,
+  disabled,
+  readOnly,
   ...rest
 }) => (
   <Form.Group {...rest}>
@@ -35,10 +37,13 @@ export const InputField = ({
       required
       type="text"
       name={name}
+      className={readOnly ? "read-only" : ""}
       placeholder={placeholder}
       value={value}
       isInvalid={!!error}
       onChange={onChange}
+      disabled={disabled}
+      readOnly={readOnly}
     />
     <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
   </Form.Group>

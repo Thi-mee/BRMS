@@ -1,22 +1,45 @@
 import { Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
-/**
- * @param {{
- *  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
- *  children: React.ReactNode;
- *  variant: "primary" | "secondary" | "success" | "outline-primary";
- * }} props
- */
-const XButton = ({ onClick, children, ...rest }) => {
+
+const XPButton = ({ variant = "primary",size="md", onClick, children, ...rest }) => (
+  <Button variant={variant} size={size} onClick={onClick} {...rest}>
+    {children}
+  </Button>
+)
+
+const BackButton = () => {
+  const navigate = useNavigate();
   return (
-    <Button
-      {...rest}
-      onClick={(e) => {
-        onClick(e);
-      }}>
+    <Button variant="outline-danger" onClick={() => navigate(-1)}>
+      Back
+    </Button>
+  );
+};
+
+const ButtonLink = ({ to, variant = "primary", children, ...rest }) => {
+  const navigate = useNavigate();
+  return (
+    <Button variant={variant} onClick={() => navigate(to)} {...rest}>
       {children}
     </Button>
   );
 };
 
-export default XButton;
+const ButtonDownload = ({
+  href,
+  children,
+  variant = "outline-dark",
+  ...rest
+}) => {
+  return (
+    <Button variant={variant} href={href} download {...rest}>
+      {children}
+    </Button>
+  );
+};
+
+
+
+
+export { BackButton, ButtonLink, ButtonDownload, XPButton as Button };

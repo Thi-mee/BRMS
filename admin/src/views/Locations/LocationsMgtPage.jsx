@@ -1,42 +1,92 @@
 import React, { useEffect } from "react";
-import { getLocationsData } from "../../store/selectors";
+import { getLocationData } from "../../store/selectors";
 import { useSelector } from "react-redux";
 import XPTable from "../../components/Table/XPTable";
 import { Button, Modal } from "react-bootstrap";
-import { AlertWithButtonAndFunctionAndCancel, alert } from "../../utils/Alert";
 import {
+  AlertWithButtonAndFunctionAndCancel,
+  alert,
+  alertWithButtonAndFunction,
+} from "../../utils/Alert";
+import {
+  addLocation,
   deleteLocation,
   editLocation,
-} from "../../store/thunks/locationThunks";
+} from "../../store/features/location/locationThunks";
 import { useDispatch } from "react-redux";
 import LocationForm from "../../components/Forms/LocationForm";
 import { useFormUtils } from "../../utils/useFormUtils";
 import { locationValidationRules } from "../../utils/validationRules";
+import FlexHeader from "../../components/Headers/FlexHeader";
+import { REQUEST_STATUS } from "../../utils/constants";
+import {
+  clearError,
+  resetStatus,
+} from "../../store/features/location/locationSlice";
+
+const initialState = {
+  id: "",
+  title: "",
+  description: "",
+  area: "",
+  city: "",
+  lcda: "",
+  landmark: "",
+};
+const ModalActions = {
+  ADD: Symbol("ADD"),
+  EDIT: Symbol("EDIT"),
+};
 
 const LocationsMgtPage = () => {
-  const { locations, status, error } = useSelector(getLocationsData);
+  const { locations, error, deleteStatus, addStatus, editStatus } =
+    useSelector(getLocationData);
   const [showModal, setShowModal] = React.useState(false);
-  const { form, errors, handleValueChange, setFormValues, validateSubmission } =
-    useFormUtils(
-      {
-        title: "",
-        description: "",
-        area: "",
-        city: "",
-        lcda: "",
-        landmark: "",
-      },
-      locationValidationRules
-    );
+  const [modalAction, setModalAction] = React.useState(null);
+  const {
+    values,
+    errors,
+    handleValueChange,
+    validateForm,
+    initForm,
+    valuesChanged,
+  } = useFormUtils(initialState, locationValidationRules);
 
   const dispatch = useDispatch();
-
   const handleClose = () => setShowModal(false);
   const handleShow = () => setShowModal(true);
 
   useEffect(() => {
-    error && alert("error", error);
-  }, [error]);
+    const deleteFailed = deleteStatus === REQUEST_STATUS.FAILED;
+    const addFailed = addStatus === REQUEST_STATUS.FAILED;
+    const editFailed = editStatus === REQUEST_STATUS.FAILED;
+    if ((deleteFailed || addFailed || editFailed) && error) {
+      alert("Error", error);
+      dispatch(clearError());
+    }
+  }, [error, deleteStatus, addStatus, editStatus, dispatch]);
+
+  useEffect(() => {
+    const deleteSuccess = deleteStatus === REQUEST_STATUS.SUCCEEDED;
+    const addSuccess = addStatus === REQUEST_STATUS.SUCCEEDED;
+    const editSuccess = editStatus === REQUEST_STATUS.SUCCEEDED;
+
+    if (deleteSuccess) {
+      alert("success", "Location deleted successfully");
+      dispatch(resetStatus("deleteStatus"));
+    }
+    if (addSuccess || editSuccess) {
+      const snippet = addSuccess ? "added" : "edited";
+      alertWithButtonAndFunction(
+        "success",
+        `Location ${snippet} successfully`,
+        "",
+        "Proceed",
+        () => handleClose()
+      );
+      dispatch(resetStatus(addSuccess ? "addStatus" : "editStatus"));
+    }
+  }, [addStatus, deleteStatus, editStatus, dispatch]);
 
   const deleteLocationCallback = (row) => dispatch(deleteLocation(row.id));
 
@@ -50,97 +100,131 @@ const LocationsMgtPage = () => {
       deleteLocationCallback.bind(null, row)
     );
 
-  const preEditLocation = (row) => {
-    console.log(row);
-    setFormValues(row);
+  const preAddOrEdit = (row) => {
+    if (!row) {
+      setModalAction(ModalActions.ADD);
+      initForm();
+    } else {
+      setModalAction(ModalActions.EDIT);
+      initForm(row);
+    }
     handleShow();
   };
 
   const handleSave = () => {
-    if (validateSubmission()) {
-      console.log(form);
-      dispatch(editLocation(form));
-      alert("success", "Location edited successfully");
+    if (!valuesChanged()) return;
+    if (validateForm()) {
+      if (modalAction === ModalActions.ADD) dispatch(addLocation(values));
+      else dispatch(editLocation(values));
     }
   };
 
   return (
     <div className="page">
-      <div className="heading mb-3 mt-2">
-        <h1>Locations</h1>
-        <div className="btn-flex"></div>
-      </div>
-      <XPTable
-        titles={[
-          "Title",
-          "Description",
-          "Area",
-          "City",
-          "LCDA",
-          "Landmark",
-          "Actions",
-        ]}
-        // selectMultiple
-        data={locations}
-        renderitem={(row) => (
-          <>
-            <td>{row.title}</td>
-            <td>{row.description}</td>
-            <td>{row.area}</td>
-            <td>{row.city}</td>
-            <td>{row.lcda}</td>
-            <td>{row.landmark}</td>
-          </>
-        )}
-        noOfButtons={2}
-        renderBtn={(index, rowIndex, row) => {
-          if (index === 0) {
-            return (
-              <Button
-                key={index}
-                variant="success"
-                size="sm"
-                onClick={() => preEditLocation(locations[rowIndex])}>
-                Edit
-              </Button>
-            );
-          } else if (index === 1) {
-            return (
-              <Button
-                key={index}
-                variant="danger"
-                size="sm"
-                onClick={() => {
-                  preDeleteLocation(row);
-                }}>
-                Delete
-              </Button>
-            );
-          }
-        }}
+      <Heading handleAddBtn={preAddOrEdit} />
+      <LocationTable
+        locations={locations}
+        preAddOrEdit={preAddOrEdit}
+        preDeleteLocation={preDeleteLocation}
       />
-      <Modal size="lg" show={showModal} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Location</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <LocationForm
-            form={form}
-            errors={errors}
-            handleValueChange={handleValueChange}
-          />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleSave}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <LocationModal
+        show={showModal}
+        handleClose={handleClose}
+        handleSave={handleSave}
+        form={values}
+        errors={errors}
+        handleValueChange={handleValueChange}
+        modalAction={modalAction}
+      />
     </div>
   );
 };
 
 export default LocationsMgtPage;
+
+function Heading(props) {
+  return (
+    <FlexHeader headerText="Locations Management">
+      <div className="btn-flex">
+        <Button variant="outline-primary" onClick={() => props.handleAddBtn()}>
+          Add Location
+        </Button>
+      </div>
+    </FlexHeader>
+  );
+}
+
+function LocationTable(props) {
+  return (
+    <XPTable
+      titles={[
+        "Title",
+        "Description",
+        "Area",
+        "City",
+        "LCDA",
+        "Landmark",
+        "Actions",
+      ]}
+      data={props.locations}
+      serial
+      renderitem={(row, rowIndex) => (
+        <>
+          <td>{row.title}</td>
+          <td>{row.description}</td>
+          <td>{row.area}</td>
+          <td>{row.city}</td>
+          <td>{row.lcda}</td>
+          <td>{row.landmark}</td>
+          <td>
+            {
+              <div className="btn-flex">
+                <Button
+                  variant="success"
+                  size="sm"
+                  onClick={() => props.preAddOrEdit(props.locations[rowIndex])}>
+                  Edit
+                </Button>
+                <Button
+                  variant="danger"
+                  size="sm"
+                  onClick={() => props.preDeleteLocation(row)}>
+                  Delete
+                </Button>
+              </div>
+            }
+          </td>
+        </>
+      )}
+    />
+  );
+}
+
+function LocationModal(props) {
+  return (
+    <Modal size="lg" show={props.show} onHide={props.handleClose}>
+      <Modal.Header closeButton>
+        <Modal.Title>
+          {props.modalAction === ModalActions.ADD
+            ? "Add Location"
+            : "Edit Location"}
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <LocationForm
+          form={props.form}
+          errors={props.errors}
+          handleValueChange={props.handleValueChange}
+        />
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={props.handleClose}>
+          Close
+        </Button>
+        <Button variant="primary" onClick={props.handleSave}>
+          Save Changes
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+}

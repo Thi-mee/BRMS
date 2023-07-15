@@ -15,7 +15,7 @@ async function createLocation(location) {
     ];
     const { rows } = await pool.query(query, value);
     if (rows.length === 0) return null;
-    return rows[0].id;
+    return rows[0];
   } catch (error) {
     console.log(error);
     throw new Error("Failed to create a new location");
@@ -36,7 +36,7 @@ async function getLocations() {
 async function editLocation(location) {
   try {
     const query =
-      'UPDATE brms.locations SET "title" = $1, "lcda" = $2, "city" = $3, "area" = $4, "description" = $5, "landmark" = $6 WHERE "id" = $7 RETURNING "id"';
+      'UPDATE brms.locations SET "title" = $1, "lcda" = $2, "city" = $3, "area" = $4, "description" = $5, "landmark" = $6 WHERE "id" = $7 RETURNING *';
     const values = [
       location.title,
       location.lcda,
@@ -48,6 +48,7 @@ async function editLocation(location) {
     ];
     const { rows } = await pool.query(query, values);
     if (rows.length === 0) return null;
+    console.log(rows[0]);
     return rows[0];
   } catch (error) {
     console.log(error);
@@ -62,7 +63,8 @@ async function deleteLocation(locationId) {
     const values = [locationId];
     const { rows } = await pool.query(query, values);
     if (rows.length === 0) return null;
-    return rows[0];
+    // console.log(rows[0])
+    return rows;
   } catch (error) {
     if (error.code === "23503") {
       throw new Error("Location is in use");

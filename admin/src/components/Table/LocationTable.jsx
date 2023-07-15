@@ -1,60 +1,41 @@
-import { useState } from "react";
 import { Table, Button } from "react-bootstrap";
-import { CheckboxField } from "../Forms/Fields";
+import XPTable from "./XPTable";
 
 export const LocationTable = ({
   locations,
-  setField,
-  selectedIndex,
+  onSelect,
 }) => {
-  const [selectedLocation, setSelectedLocation] = useState({});
-
-  const handleCheckChange = (e, value) => {
-    setSelectedLocation(value);
-    setField("locationTitle", value.title, selectedIndex);
-  };
-
   return (
-    <Table>
-      <thead>
-        <tr>
-          <th>#</th>
-          {/* <th>
-            <input type="checkbox" />
-          </th> */}
-          <th>Title</th>
-          <th>City</th>
-          <th>Area</th>
-          <th>Local Government</th>
-        </tr>
-      </thead>
-      <tbody>
-        {locations?.map((value, index) => {
-          return (
-            <tr key={index}>
-              <td>
-                <CheckboxField
-                  name="location"
-                  type="radio"
-                  value={value === selectedLocation}
-                  onChange={(e) => handleCheckChange(e, value)}
-                />
-              </td>
-              <td>{value.title}</td>
-              <td>{value.city}</td>
-              <td>{value.area}</td>
-              <td>{value.lcda}</td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </Table>
+    <XPTable
+      data={locations}
+      titles={["Title", "City", "Area", "LCDA", ""]}
+      serial
+      renderitem={(item) => (
+        <>
+          <td className="text-ellipsis" style={{maxWidth: '120px'}}>{item.title}</td>
+          <td className="text-ellipsis" style={{maxWidth: '120px'}}>{item.city}</td>
+          <td className="text-ellipsis" style={{maxWidth: '120px'}}>{item.area}</td>
+          <td className="text-ellipsis" style={{maxWidth: '120px'}}>{item.lcda}</td>
+          <td className="text-ellipsis" style={{maxWidth: '120px'}}>
+            <Button onClick={() => onSelect(item)}>Select</Button>
+          </td>
+        </>
+      )}
+    />
   );
 };
 
-export const singlePickUpModal = (locations, setFormValues, handleClose) => {
+export const singlePickUpModal = (locations, setFields, handleClose) => {
   const handleSettingLocation = (location) => {
-    setFormValues({ location, locationOriginal: location });
+    setFields({
+      "location.id": location.id,
+      "location.title": location.title,
+      "location.landmark": location.landmark,
+      "location.description": location.description,
+      "location.city": location.city,
+      "location.lcda": location.lcda,
+      "location.area": location.area,
+    });
     handleClose();
   };
 
@@ -90,9 +71,5 @@ export const singlePickUpModal = (locations, setFormValues, handleClose) => {
     </Table>
   );
 };
-
-// const LocationTable = () => {
-//   return <></>;
-// };
 
 export default LocationTable;

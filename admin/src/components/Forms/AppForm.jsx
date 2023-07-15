@@ -1,16 +1,12 @@
 import React from "react";
-import { Form, Col, Row, Button } from "react-bootstrap";
+import { Form, Col, Row, Button, Alert } from "react-bootstrap";
 import { InputField, CheckboxField, TextAreaField } from "./Fields";
 
-const AppForm = ({
-  errors,
-  handleShow,
-  form,
-  handleValueChange,
-}) => {
+const AppForm = ({ errors, handleShow, values, handleValueChange, formTopErr, clearTopErr }) => {
   return (
     <Form>
-      {/* {console.log(form)} */}
+    {/* {console.log(formTopErr)} */}
+      <Alert variant="danger" onClose={clearTopErr} show={formTopErr.length > 0} dismissible>{formTopErr}</Alert>
       <Row className="mb-3">
         <InputField
           as={Col}
@@ -18,8 +14,9 @@ const AppForm = ({
           controlId="validationCustom01"
           label="Name"
           name="name"
+          readOnly={values?.id}
           placeholder="Please enter a name"
-          value={form?.name}
+          value={values?.name}
           onChange={handleValueChange}
           error={errors?.name}
           required
@@ -31,7 +28,7 @@ const AppForm = ({
           label="Title"
           name="title"
           placeholder="Title"
-          value={form?.title}
+          value={values?.title}
           onChange={handleValueChange}
           error={errors?.title}
         />
@@ -44,7 +41,7 @@ const AppForm = ({
           label="Nearest Bus-Stop"
           name="busStop"
           placeholder="Nearest Bus Stop"
-          value={form?.busStop}
+          value={values?.busStop}
           onChange={handleValueChange}
           error={errors?.busStop}
           required
@@ -58,7 +55,7 @@ const AppForm = ({
           label="Description"
           name="description"
           placeholder="Leave a Description here"
-          value={form?.description}
+          value={values?.description}
           onChange={handleValueChange}
           error={errors?.description}
           required
@@ -68,16 +65,16 @@ const AppForm = ({
         className="mb-3"
         label="Status"
         name="status"
-        value={form?.status}
+        value={values?.status}
         onChange={handleValueChange}
         error={errors?.status}
         required
         controlId="validationCustom090"
       />
 
-      <div className="heading">
-        <h1 className="pt-5 pb-3">Location</h1>
-        <Button variant="secondary" onClick={handleShow}>
+      <div className="heading pt-4 pb-4">
+        <h2>Location</h2>
+        <Button variant="warning" onClick={handleShow}>
           Select Location
         </Button>
       </div>
@@ -90,9 +87,9 @@ const AppForm = ({
           label="Title"
           name="location.title"
           placeholder="Enter Location Title"
-          value={form?.location?.title}
+          value={values["location.title"]}
           onChange={handleValueChange}
-          error={errors?.location?.title}
+          error={errors["location.title"]}
           required
         />
         <InputField
@@ -102,9 +99,9 @@ const AppForm = ({
           label="LCDA"
           name="location.lcda"
           placeholder="LCDA"
-          value={form?.location?.lcda}
+          value={values["location.lcda"]}
           onChange={handleValueChange}
-          error={errors?.location?.lcda}
+          error={errors["location.lcda"]}
           required
         />
       </Row>
@@ -116,9 +113,9 @@ const AppForm = ({
           label="City"
           name="location.city"
           placeholder="City"
-          value={form?.location?.city}
+          value={values["location.city"]}
           onChange={handleValueChange}
-          error={errors?.location?.city}
+          error={errors["location.city"]}
           required
         />
         <InputField
@@ -128,9 +125,9 @@ const AppForm = ({
           label="Area"
           name="location.area"
           placeholder="Area"
-          value={form?.location?.area}
+          value={values["location.area"]}
           onChange={handleValueChange}
-          error={errors?.location?.area}
+          error={errors["location.area"]}
           required
         />
       </Row>
@@ -142,9 +139,9 @@ const AppForm = ({
           label="Description"
           name="location.description"
           placeholder="Description"
-          value={form?.location?.description}
+          value={values["location.description"]}
           onChange={handleValueChange}
-          error={errors?.location?.description}
+          error={errors["location.description"]}
           required
         />
         <TextAreaField
@@ -154,9 +151,9 @@ const AppForm = ({
           label="Landmark"
           name="location.landmark"
           placeholder="Landmark"
-          value={form?.location?.landmark}
+          value={values["location.landmark"]}
           onChange={handleValueChange}
-          error={errors?.location?.landmark}
+          error={errors["location.landmark"]}
           required
         />
       </Row>

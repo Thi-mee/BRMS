@@ -1,10 +1,10 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import  pickUpPointSlice   from './slices/pickUpPointSlice';
-import locationSlice from "./slices/locationSlice";
+import locationReducer from "./features/location/locationSlice";
+import pickUpPointReducer from "./features/pickup/pickUpPointSlice";
 
 export const store = configureStore({
     reducer: combineReducers({
-        pickup: pickUpPointSlice,
-        locations: locationSlice
+        pickup: pickUpPointReducer,
+        locations: locationReducer
     })
 })

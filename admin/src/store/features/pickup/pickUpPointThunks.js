@@ -1,11 +1,11 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { apiCall, getAxiosInstance } from "../../utils/api";
+import { apiCall, getAxiosInstance } from "../../../utils/api";
 
 const apiEndPoint = "http://localhost:5000/api/pickup-points";
 const actionTypes = {
   FETCH_PICKUP_POINTS: "pickuppoints/fetch",
   ADD_PICKUP_POINTS: "pickuppoints/add",
-  DELETE_PICKUP_POINTS: "pickuppoints/delete",
+  DELETE_PICKUP_POINT: "pickuppoints/delete",
   UPDATE_PICKUP_POINTS: "pickuppoints/update",
   ADD_BULK_PICKUP_POINTS: "pickuppoints/addbulk",
 };
@@ -32,11 +32,11 @@ export const addPickUpPoints = createAsyncThunk(
   }
 );
 
-export const deletePickUpPoints = createAsyncThunk(
-  actionTypes.DELETE_PICKUP_POINTS,
+export const deletePickUpPoint = createAsyncThunk(
+  actionTypes.DELETE_PICKUP_POINT,
   async (id) => {
-    const response = await apiCall(api, `/${id}`, "delete", {});
-    return response.data;
+    await apiCall(api, `/${id}`, "delete", {});
+    return id;
   }
 );
 
@@ -52,6 +52,7 @@ export const addBulkPickUpPoints = createAsyncThunk(
   actionTypes.ADD_BULK_PICKUP_POINTS,
   async (form) => {
     const response = await apiCall(api, "/bulk", "post", form);
+    console.log(response)
     return response.data;
   }
 );

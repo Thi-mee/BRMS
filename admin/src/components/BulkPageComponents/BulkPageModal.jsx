@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo, useCallback } from "react";
 import { Button, Modal } from "react-bootstrap";
 import LocationForm from "../Forms/LocationForm";
 import PickUpPointFormWithoutLocation from "../Forms/PkpForm";
@@ -7,7 +7,7 @@ import {
   locationValidationRules,
   pupValidationRules,
 } from "../../utils/validationRules";
-import { alert } from "../../utils/Alert";
+import { alert, alertWithButtonAndFunction } from "../../utils/Alert";
 
 const BulkPageModal = ({
   showModal,
@@ -17,15 +17,42 @@ const BulkPageModal = ({
   errors,
   handleValueChange,
   locations,
-  setLocationObj,
-  locationObj,
-  setField,
   selectedIndex,
   validateSubmission,
-  setRow,
-  setNewLocations,
+  modifyPickupTableRow,
+  addLocationToPickup,
 }) => {
-  const [serverError, setServerError] = React.useState(null);
+
+  const setSelectedLocations = useCallback((location) => {
+    addLocationToPickup(location, selectedIndex);
+    handleClose()
+  }, [selectedIndex, addLocationToPickup, handleClose]);
+
+  const handleAddAndEditLocation = (action) => {
+    if (validateSubmission()) {
+      addLocationToPickup(form, selectedIndex);
+      const message = action === ModalActions.ADD ? "added" : "edited";
+      alert("success", `Location ${message} successfully`);
+      handleClose();
+    }
+  };
+
+  const handleEditPickup = () => {
+    if (validateSubmission()) {
+      modifyPickupTableRow(form, selectedIndex);
+      alert("success", "Pick Up Point edited successfully");
+      handleClose();
+    }
+  };
+
+  const handleClick = () => {
+    if (modalAction === ModalActions.ADD || modalAction === ModalActions.EDIT) {
+      handleAddAndEditLocation(modalAction);
+    } else if (modalAction === ModalActions.EDIT_PICKUP) {
+      handleEditPickup();
+    }
+  };
+
   return (
     <Modal size="lg" show={showModal} onHide={handleClose}>
       <Modal.Header closeButton>
@@ -38,7 +65,6 @@ const BulkPageModal = ({
             form={form}
             errors={errors}
             handleValueChange={handleValueChange}
-            serverError={serverError}
           />
         )}
         {modalAction === ModalActions.EDIT_PICKUP && (
@@ -51,63 +77,25 @@ const BulkPageModal = ({
         {modalAction === ModalActions.SELECT && (
           <LocationTable
             locations={locations}
-            setLocationObj={setLocationObj}
-            locationObj={locationObj}
-            setField={setField}
-            selectedIndex={selectedIndex}
+            onSelect={setSelectedLocations}
           />
         )}
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          Close
-        </Button>
-        <Button
-          variant="primary"
-          onClick={async () => {
-            try {
-              switch (modalAction) {
-                case ModalActions.ADD:
-                  if (validateSubmission()) {
-                    setNewLocations(prev => [...prev, {...form, pkpIndex: selectedIndex}])
-                    setField("locationTitle", form.title, selectedIndex)
-                    alert("success", "Location Added successfully");
-                    handleClose();
-                  }
-                  break;
-                case ModalActions.EDIT:
-                  if (validateSubmission()) {
-                    setRow(form, selectedIndex);
-                    alert("success", "Location edited successfully");
-                    handleClose();
-                  }
-                  break;
-                case ModalActions.EDIT_PICKUP:
-                  if (validateSubmission()) {
-                    setRow(form, selectedIndex);
-                    alert("success", "Pick Up Point edited successfully");
-                    handleClose();
-                  }
-                  console.log("Edit Pick Up");
-                  break;
-                case ModalActions.SELECT:
-                  console.log("Select");
-                  break;
-                default:
-                  break;
-              }
-            } catch (error) {
-              setServerError(error.message);
-            }
-          }}>
-          Save Changes
-        </Button>
-      </Modal.Footer>
+      {modalAction !== ModalActions.SELECT && (
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleClick}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      )}
     </Modal>
   );
 };
 
-export default BulkPageModal;
+export default memo(BulkPageModal);
 
 export const ModalActions = {
   ADD: Symbol("Add"),

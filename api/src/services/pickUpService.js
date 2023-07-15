@@ -15,13 +15,20 @@ async function addPickUp(pickUp) {
       pickUp.locationId,
     ];
     const { rows } = await pool.query(query, values);
-    return rows;
+    return rows[0];
   } catch (error) {
     if (error.code === "42703") {
-      console.log(error);
       throw new Error("Location isn't valid");
     }
-    console.log(error);
+    if (error.code === "23505") {
+      throw new Error("Pick up point already exists");
+    }
+    if (error.code === "23503") {
+      throw new Error("Location doesn't exist");
+    }
+    if (error.code === "22P02") {
+      throw new Error("Location isn't valid");
+    }
     throw new Error("Failed to add new pickup");
   }
 }

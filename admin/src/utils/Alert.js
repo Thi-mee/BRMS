@@ -8,7 +8,7 @@ export const alert = (icon, title, text) => {
     })
 }
 
-export const AlertWithButton = (icon, title, text, confirmButtonText) => {
+export const alertWithButton = (icon, title, text, confirmButtonText) => {
     return Swal.fire({
         icon: icon,
         title: title,
@@ -17,16 +17,22 @@ export const AlertWithButton = (icon, title, text, confirmButtonText) => {
     })
 }
 
-export const AlertWithButtonAndFunction = (icon, title, text, confirmButtonText, func) => {
-    return Swal.fire({
-        icon: icon,
-        title: title,
-        text : text,
-        confirmButtonText: confirmButtonText
-    }).then((result) => {
-        if (result.isConfirmed) {
-            func()
-        }
+export const alertWithButtonAndFunction = async (icon, title, text, confirmButtonText, func) => {
+    return new Promise((resolve, reject) => {
+        Swal.fire({
+            icon: icon,
+            title: title,
+            text : text,
+            confirmButtonText: confirmButtonText
+        }).then((result) => {
+            if (result.isConfirmed) {
+                func()
+                resolve(true)
+            }
+            else {
+                resolve(false)
+            }
+        })
     })
 }
 
