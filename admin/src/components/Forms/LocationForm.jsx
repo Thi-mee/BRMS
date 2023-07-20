@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, Col, Row } from "react-bootstrap";
-import { InputField, TextAreaField } from "./Fields";
+import { InputField, TextAreaField } from "../Form/Fields";
 
 const LocationForm = ({errors, form, handleValueChange}) => {
   return (
@@ -12,7 +12,7 @@ const LocationForm = ({errors, form, handleValueChange}) => {
           controlId="validationCustom01"
           label="Title"
           name="title"
-          readOnly={form.id ? true : false}
+          readOnly={!!form.id}
           placeholder="Please enter a title"
           value={form.title}
           onChange={handleValueChange}

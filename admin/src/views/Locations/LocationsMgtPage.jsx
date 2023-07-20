@@ -180,7 +180,7 @@ function LocationTable(props) {
             {
               <div className="btn-flex">
                 <Button
-                  variant="success"
+                  variant="warning"
                   size="sm"
                   onClick={() => props.preAddOrEdit(props.locations[rowIndex])}>
                   Edit

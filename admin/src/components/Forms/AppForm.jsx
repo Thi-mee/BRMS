@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, Col, Row, Button, Alert } from "react-bootstrap";
-import { InputField, CheckboxField, TextAreaField } from "./Fields";
+import { InputField, CheckboxField, TextAreaField } from "../Form/Fields";
 
 const AppForm = ({ errors, handleShow, values, handleValueChange, formTopErr, clearTopErr }) => {
   return (

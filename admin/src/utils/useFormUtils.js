@@ -47,11 +47,11 @@ export const useFormUtils = (initialState, validationRules) => {
     return Object.keys(newErrors).length === 0;
   }, [values]);
 
-  const initForm = useCallback((formdata, newValidationRules) => {
-    if (formdata) {
-      setValues(convertNestedToNotNested(formdata));
+  const initForm = useCallback((formData, newValidationRules) => {
+    if (formData && newValidationRules) {
+      setValues(convertNestedToNotNested(formData));
+      initialFormState.current = formData;
       validationRulesRef.current = newValidationRules ?? validationRulesRef.current;
-      initialFormState.current = formdata;
     }
     else {
       setValues(convertNestedToNotNested(initialFormState.current));

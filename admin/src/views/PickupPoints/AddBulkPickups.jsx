@@ -44,13 +44,13 @@ const Bulk_PickUpPoints = () => {
         "Proceed",
         () => navigate("/pick_up_points")
       );
-      resetStatus("addBulkStatus");
+      dispatch(resetStatus("addBulkStatus"));
     }
     if (addBulkFailed) {
       alert("error", "Error", error);
-      resetStatus("addBulkStatus");
+      dispatch(resetStatus("addBulkStatus"));
     }
-  }, [error, addBulkStatus, navigate]);
+  }, [error, addBulkStatus, navigate, dispatch]);
 
   const newLocations = selectedLocations.filter(
     (lct) => !locations.some((l) => l.title === lct.title)

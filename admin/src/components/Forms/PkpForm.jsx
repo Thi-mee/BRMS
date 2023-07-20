@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, Col, Row } from "react-bootstrap";
-import { InputField, CheckboxField, TextAreaField } from "./Fields";
+import { InputField, CheckboxField, TextAreaField } from "../Form/Fields";
 
 const PickUpPointFormWithoutLocation = ({
   errors,

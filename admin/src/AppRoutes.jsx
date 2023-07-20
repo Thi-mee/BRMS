@@ -6,6 +6,7 @@ import BulkPickUpPoints from "./views/PickupPoints/AddBulkPickups";
 import Layout from "./components/Layout/Layout";
 import LocationsMgtPage from "./views/Locations/LocationsMgtPage";
 import SingleAddOrEditPickUpP from "./views/PickupPoints/SingleAddOrEditPickup";
+import RouteMgt from "./views/Routes/RouteMgt";
 // import { store } from "./store/store";
 
 export const router = createBrowserRouter([
@@ -36,6 +37,10 @@ export const router = createBrowserRouter([
         path: "/locations",
         element: <LocationsMgtPage />,
       },
+      {
+        path: "/routes",
+        element: <RouteMgt />
+      }
     ],
   },
 ]);

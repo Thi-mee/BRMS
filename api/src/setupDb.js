@@ -9,12 +9,12 @@ const createTables = async () => {
         description TEXT NOT NULL,
         city TEXT NOT NULL,
         lcda TEXT NOT NULL,
-        area TEXT NOT NULL,
+        area TEXT NOT NULL
       )`);
 
-    // await pool.query(
-    //   `CREATE TYPE status AS ENUM ('active', 'suspended', 'inactive')`
-    // );
+    await pool.query(
+      `CREATE TYPE status AS ENUM ('active', 'suspended', 'inactive')`
+    );
 
     await pool.query(`CREATE TABLE IF NOT EXISTS brms.pickuppoints(
         id TEXT PRIMARY KEY,

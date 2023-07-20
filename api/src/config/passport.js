@@ -37,7 +37,6 @@ module.exports = function(app, passport) {
     }
   ));
 
-  console.log(process.env.JWT_SECRET)
   passport.use(new JwtStrategy(
     {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

@@ -1,0 +1,71 @@
+[
+  { "name": "Agbado-Oke Odo", "label": "agbadoOkeOdo", "value": 1 },
+  { "name": "Agboyi Ketu", "label": "agboyiKetu", "value": 2 },
+  { "name": "Apapa Iganmu", "label": "apapaIganmu", "value": 3 },
+  { "name": "Ayobo-Ipaja", "label": "ayoboIpaja", "value": 4 },
+  { "name": "Badagry West", "label": "badagryWest", "value": 5 },
+  { "name": "Bariga", "label": "bariga", "value": 6 },
+  { "name": "Coker-Aguda", "label": "cokerAguda", "value": 7 },
+  { "name": "Egbe-Idimu", "label": "egbeIdimu", "value": 8 },
+  { "name": "Ejigbo", "label": "ejigbo", "value": 9 },
+  { "name": "Epe", "label": "epe", "value": 10 },
+  { "name": "Eredo", "label": "eredo", "value": 11 },
+  { "name": "Eti-Osa East", "label": "etiOsaEast", "value": 12 },
+  { "name": "Eti-Osa West", "label": "etiOsaWest", "value": 13 },
+  { "name": "Iba", "label": "iba", "value": 14 },
+  { "name": "Ifako-Ijaiye", "label": "ifakoIjaiye", "value": 15 },
+  { "name": "Ifelodun", "label": "ifelodun", "value": 16 },
+  { "name": "Igando-Ikotun", "label": "igandoIkotun", "value": 17 },
+  { "name": "Igbogbo-Baiyeku", "label": "igbogboBaiyeku", "value": 18 },
+  { "name": "Ijede", "label": "ijede", "value": 19 },
+  { "name": "Ikeja", "label": "ikeja", "value": 20 },
+  { "name": "Ikorodu North", "label": "ikoroduNorth", "value": 21 },
+  { "name": "Ikorodu West", "label": "ikoroduWest", "value": 22 },
+  { "name": "Ikosi-Ejirin", "label": "ikosiEjirin", "value": 23 },
+  { "name": "Ikoyi-Obalende", "label": "ikoyiObalende", "value": 24 },
+  { "name": "Imota", "label": "imota", "value": 25 },
+  { "name": "Isolo", "label": "isolo", "value": 26 },
+  { "name": "Kosofe", "label": "kosofe", "value": 27 },
+  {
+    "name": "Lagos Island East LCDA (Eti-Osa)",
+    "label": "lagosIslandEastLcdaEtiOsa",
+    "value": 28
+  },
+  {
+    "name": "Lagos Island West LCDA (Lagos Island)",
+    "label": "lagosIslandWestLcdaLagosIsland",
+    "value": 29
+  },
+  {
+    "name": "Lagos Mainland East LCDA (Yaba)",
+    "label": "lagosMainlandEastLcdaYaba",
+    "value": 30
+  },
+  {
+    "name": "Lagos Mainland West LCDA (Costain)",
+    "label": "lagosMainlandWestLcdaCostain",
+    "value": 31
+  },
+  { "name": "Lekki LCDA (Eti-Osa)", "label": "lekkiLcdaEtiOsa", "value": 32 },
+  {
+    "name": "Mosan-Okunola LCDA (Alimosho)",
+    "label": "mosanOkunolaLcdaAlimosho",
+    "value": 33
+  },
+  {
+    "name": "Mushin North LCDA (Mushin)",
+    "label": "mushinNorthLcdaMushin",
+    "value": 34
+  },
+  {
+    "name": "Mushin South LCDA (Mushin)",
+    "label": "mushinSouthLcdaMushin",
+    "value": 35
+  },
+  {
+    "name": "Odi-Olowo/Ojuwoye LCDA (Mushin)",
+    "label": "odiOlowoOjuwoyeLcdaMushin",
+    "value": 36
+  },
+  { "name": "Ojodu LCDA (Ikeja)", "label": "ojoduLcdaIkeja", "value": 37 }
+]
