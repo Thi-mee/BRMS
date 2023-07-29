@@ -1,13 +1,14 @@
-import React from "react";
 import { createBrowserRouter } from "react-router-dom";
-import HomePage from "./views/HomePage";
 import PickUpPointMgt from "./views/PickupPoints/PickUpPointMgt";
 import BulkPickUpPoints from "./views/PickupPoints/AddBulkPickups";
 import Layout from "./components/Layout/Layout";
 import LocationsMgtPage from "./views/Locations/LocationsMgtPage";
 import SingleAddOrEditPickUpP from "./views/PickupPoints/SingleAddOrEditPickup";
 import RouteMgt from "./views/Routes/RouteMgt";
-// import { store } from "./store/store";
+import RouteMap from "./views/Routes/RouteMapping";
+
+import DashBoardPage from "./views/DashBoard/DashBoardPage";
+
 
 export const router = createBrowserRouter([
   {
@@ -15,7 +16,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <HomePage />,
+        element: <DashBoardPage />,
       },
       {
         path: "/pick_up_points",
@@ -39,8 +40,20 @@ export const router = createBrowserRouter([
       },
       {
         path: "/routes",
-        element: <RouteMgt />
-      }
+        element: <RouteMgt />,
+      },
+      {
+        path: "/routes/mapped-points/:id",
+        element: <RouteMap />,
+      },
+      {
+        path: "/authorize-workflow",
+        element: (
+          <div className="page">
+            <h1>Authorize Workflow</h1>
+          </div>
+        ),
+      },
     ],
   },
 ]);

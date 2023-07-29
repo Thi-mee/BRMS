@@ -7,7 +7,7 @@ const {
 const authService = require("../services/authService");
 const { generateUniqueId } = require("../lib/utils");
 
-const register = async (req, res, next) => {
+const register = async (req, res) => {
   const errors = registerValidator.validate(req.body);
   if (errors.length > 0) {
     return res.status(400).json(ErrorResponse({ message: errors.join(", ") }));
@@ -25,7 +25,7 @@ const register = async (req, res, next) => {
   }
 };
 
-const login = async (req, res, next) => {
+const login = async (req, res) => {
   const errors = loginValidator.validate(req.body);
   if (errors.length > 0) {
     return res.status(400).json(ErrorResponse({ message: errors.join(", ") }));
@@ -42,7 +42,7 @@ const login = async (req, res, next) => {
   }
 };
 
-const logout = async (req, res, next) => {
+const logout = async (req, res) => {
   try {
     return res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
@@ -50,7 +50,7 @@ const logout = async (req, res, next) => {
   }
 };
 
-const getUser = async (req, res, next) => {
+const getUser = async (req, res) => {
   try {
     const retVal = await authService.getUser(req.user.email);
     if (retVal === null)

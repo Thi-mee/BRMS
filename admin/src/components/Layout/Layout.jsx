@@ -5,9 +5,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { fetchPickupPoints } from "../../store/features/pickup/pickUpPointThunks";
 import { fetchAllLocations } from "../../store/features/location/locationThunks";
+import { fetchRoutes } from "../../store/features/routes/routeThunks";
 import {
   getLocationFetchStatus,
   getPickupFetchStatus,
+  getRoutesFetchStatus,
 } from "../../store/selectors";
 import { REQUEST_STATUS } from "../../utils/constants";
 
@@ -15,14 +17,17 @@ const Layout = () => {
   const dispatch = useDispatch();
   const fetchLStatus = useSelector(getLocationFetchStatus);
   const fetchPStatus = useSelector(getPickupFetchStatus);
+  const fetchRStatus = useSelector(getRoutesFetchStatus);
 
   const isLoading = () =>
     fetchLStatus === REQUEST_STATUS.LOADING &&
-    fetchPStatus === REQUEST_STATUS.LOADING;
+    fetchPStatus === REQUEST_STATUS.LOADING &&
+    fetchRStatus === REQUEST_STATUS.LOADING;
 
   useEffect(() => {
     dispatch(fetchPickupPoints());
     dispatch(fetchAllLocations());
+    dispatch(fetchRoutes());
   }, [dispatch]);
 
   return (

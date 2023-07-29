@@ -1,13 +1,19 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const cors = require('cors');
-const session = require('express-session');
-const passport = require('passport');
-const setUpDb = require('./setupDb')
+const express = require("express");
+const dotenv = require("dotenv");
+const cors = require("cors");
+const session = require("express-session");
+const passport = require("passport");
+const setUpDb = require("./setupDb");
+const pool = require("./config/dbConfig");
 
 const app = express();
 dotenv.config();
 
+pool.connect((err, client, done) => {
+  if (err) console.error(err);
+  else console.log("Connected to database");
+  done();
+});
 
 app.use(cors());
 app.use(express.json());
@@ -22,9 +28,9 @@ app.use(
 );
 
 // setUpDb()
-require('./config/passport')(app, passport);
+require("./config/passport")(app, passport);
 
-require('./routes')(app);
+require("./routes")(app);
 
 const PORT = process.env.PORT || 5000;
 

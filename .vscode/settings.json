@@ -1,0 +1,9 @@
+{
+  "editor.fontFamily": "Operator Mono, Consolas, 'Courier New', monospace",
+  "editor.tabSize": 2,
+  "files.autoSave": "afterDelay",
+  "editor.fontSize": 13,
+  "editor.wordWrap": "on",
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true
+}

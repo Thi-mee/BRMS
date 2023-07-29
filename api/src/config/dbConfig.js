@@ -11,15 +11,5 @@ const pool = new Pool({
   port: parseInt(process.env.DB_PORT),
 });
 
-pool.connect((err, client, release) => {
-  if (err) {
-    return console.error('Error acquiring client', err.stack);
-  }
-  console.log('Connected to BRMS database');
-  release();
-});
-
-
-
 module.exports = pool;
 

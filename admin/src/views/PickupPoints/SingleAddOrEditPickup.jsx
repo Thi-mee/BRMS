@@ -1,73 +1,25 @@
 import React, { useState, useEffect } from "react";
-import AppForm from "../../components/Forms/AppForm";
 import { useNavigate, useParams } from "react-router-dom";
-import AppModal from "../../components/BRMS_Modal/AppModal";
 import { useDispatch, useSelector } from "react-redux";
-import { singlePickUpModal } from "../../components/Table/LocationTable";
 import { getLocationData, getPickUpData } from "../../store/selectors";
-import { useFormUtils } from "../../utils/useFormUtils";
-import { addPickUpPoints } from "../../store/features/pickup/pickUpPointThunks";
-import { alertWithButton, alertWithButtonAndFunction } from "../../utils/Alert";
-import { pickupFormValidationRules } from "../../utils/validationRules";
+import { addPickUpPoints, updatePickUpPoints } from "../../store/features/pickup/pickUpPointThunks";
+import { alertWithButton, alertWithButtonAndFunction } from "../../utils/alert";
 import { PkpDto } from "../../utils/contracts";
 import FlexHeader from "../../components/Headers/FlexHeader";
-import { BackButton, Button } from "../../components/Button/Button";
+import { BackButton } from "../../components/Button/Button";
 import { REQUEST_STATUS } from "../../utils/constants";
 import { resetStatus } from "../../store/features/pickup/pickUpPointSlice";
 import { fetchAllLocations } from "../../store/features/location/locationThunks";
+import XPPickupFullForm from "../../components/Forms/PickupFullForm";
 
-const pickupFormInit = {
-  id: "",
-  name: "",
-  title: "",
-  busStop: "",
-  description: "",
-  status: false,
-  locationId: "",
-  location: {
-    id: "",
-    title: "",
-    landmark: "",
-    description: "",
-    city: "",
-    lcda: "",
-    area: "",
-  },
-};
 
 const SingleAddOrEditPickUpP = () => {
-  const [show, setShow] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { locations } = useSelector(getLocationData);
   const { pickuppoints, addStatus, updateStatus } = useSelector(getPickUpData);
   const { id } = useParams();
-  const {
-    values,
-    handleValueChange,
-    errors,
-    validateForm,
-    setFields,
-    getFormattedValues,
-  } = useFormUtils(pickupFormInit, pickupFormValidationRules);
   const [formTopErr, setFormTopErr] = useState("");
-
-  useEffect(() => {
-    const pickupPoint = pickuppoints.find((p) => p.id === id);
-    const location = locations.find((l) => l.id === pickupPoint?.locationId);
-    if (location) {
-      setFields({
-        ...pickupPoint,
-        "location.id": location.id,
-        "location.title": location.title,
-        "location.landmark": location.landmark,
-        "location.description": location.description,
-        "location.city": location.city,
-        "location.lcda": location.lcda,
-        "location.area": location.area,
-      });
-    }
-  }, [id, locations, pickuppoints, setFields]);
 
   useEffect(() => {
     const navigateToPickupMgt = () => navigate("/pick_up_points");
@@ -105,15 +57,8 @@ const SingleAddOrEditPickUpP = () => {
     }
   }, [addStatus, updateStatus, dispatch, navigate, id]);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
 
-  const handleSubmit = (e) => {
-    const isSubmissionValid = validateForm();
-    if (!isSubmissionValid) return;
-    const formValues = getFormattedValues();
-
-    console.log(formValues);
+  const handleSubmit = (formValues) => {
     try {
       checkForDuplicatePickUpPoints(formValues, pickuppoints);
     } catch (error) {
@@ -123,7 +68,7 @@ const SingleAddOrEditPickUpP = () => {
     }
     const dto = new PkpDto(formValues, locations);
     if (id) {
-      dispatch(addPickUpPoints(dto.getUpdatePkp()));
+      dispatch(updatePickUpPoints(dto.getUpdatePkp()));
     } else {
       dispatch(addPickUpPoints(dto.getAddPkp()));
     }
@@ -131,26 +76,17 @@ const SingleAddOrEditPickUpP = () => {
 
   return (
     <div className="page">
-      <AppModal
-        show={show}
-        handleClose={handleClose}
-        modalHeading={"Select Location"}
-        closeBtn={"Close"}>
-        {singlePickUpModal(locations, setFields, handleClose)}
-      </AppModal>
-      <FlexHeader headerText="Pick Up Points">
+      <FlexHeader headerText={id ? "Edit Pickup Point" : "Add Pickup Point"}>
         <div className="btn-flex">
           <BackButton />
-          <Button onClick={handleSubmit}>Save</Button>
         </div>
       </FlexHeader>
-      <AppForm
-        errors={errors}
-        handleShow={handleShow}
-        values={values}
-        handleValueChange={handleValueChange}
+      <XPPickupFullForm
         formTopErr={formTopErr}
         clearTopErr={() => setFormTopErr("")}
+        locations={locations}
+        pickupPoints={pickuppoints}
+        onSubmit={handleSubmit}
       />
     </div>
   );
@@ -183,13 +119,3 @@ function checkForDuplicateLocation(location, existingLocations) {
     throw new Error("Location already exists. Try with another Title");
   }
 }
-
-// function isObjectEqual (obj1, obj2) {
-//   const obj1Keys = Object.keys(obj1);
-//   const obj2Keys = Object.keys(obj2);
-//   if (obj1Keys.length !== obj2Keys.length) return false;
-//   for (const objKey of obj1Keys) {
-//     if (obj1[objKey] !== obj2[objKey]) return false;
-//   }
-//   return true;
-// }

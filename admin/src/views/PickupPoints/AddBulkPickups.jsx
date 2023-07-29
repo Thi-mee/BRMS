@@ -1,25 +1,23 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import BulkPickUpTable from "../../components/Table/BulkPickUpTable";
-import { useFormUtils } from "../../utils/useFormUtils";
 import { getLocationData, getPickUpData } from "../../store/selectors";
 import { useSelector, useDispatch } from "react-redux";
 import BulkPageModal, {
   ModalActions,
-  ModalFormInitialValues,
-  ModalValidationRules,
-} from "../../components/BulkPageComponents/BulkPageModal";
+} from "../../components/Modal/BulkPageModal";
 import { pupValidationRules } from "../../utils/validationRules";
-import { alert, alertWithButtonAndFunction } from "../../utils/Alert";
+import { alert, alertWithButtonAndFunction } from "../../utils/alert";
 import { BulkPkpDto } from "../../utils/contracts";
 import { BackButton, ButtonDownload } from "../../components/Button/Button";
 import FlexHeader from "../../components/Headers/FlexHeader";
-import FileInput from "../../components/Form/FileInput";
+import SpreadSheetInput from "../../components/Forms/shared/SpreadSheetInput";
 import EmptyCtn from "../../components/EmptyContainer";
 import { addBulkPickUpPoints } from "../../store/features/pickup/pickUpPointThunks";
 import { useNavigate } from "react-router-dom";
 import { resetStatus } from "../../store/features/pickup/pickUpPointSlice";
 import { REQUEST_STATUS } from "../../utils/constants";
+import {formatSpreadSheetRow} from "../../utils/utilities";
 
 const Bulk_PickUpPoints = () => {
   const dispatch = useDispatch();
@@ -27,11 +25,18 @@ const Bulk_PickUpPoints = () => {
   const [pickupPoints, setPickupPoints] = useState([]);
   const { addBulkStatus, error, pickuppoints } = useSelector(getPickUpData);
   const { locations } = useSelector(getLocationData);
-  const { values, handleValueChange, errors, validateForm, initForm } =
-    useFormUtils({}, null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedPUPs, setSelectedPUPs] = useState([]);
   const [selectedLocations, setSelectedLocations] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [selectedPickupPoint, setSelectedPickupPoint] = useState(null);
+  const [modalAction, setModalAction] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const newLocations = selectedLocations.filter(
+    (lct) => !locations.some((l) => l.title === lct.title)
+  );
+  const allLocations = [...locations, ...newLocations];
 
   useEffect(() => {
     const addBulkSuccess = addBulkStatus === REQUEST_STATUS.SUCCEEDED;
@@ -52,40 +57,30 @@ const Bulk_PickUpPoints = () => {
     }
   }, [error, addBulkStatus, navigate, dispatch]);
 
-  const newLocations = selectedLocations.filter(
-    (lct) => !locations.some((l) => l.title === lct.title)
-  );
-  const allLocations = [...locations, ...newLocations];
-
-  const [modalAction, setModalAction] = useState(null);
-  const [showModal, setShowModal] = useState(false);
   const handleClose = () => {
+    selectedLocation && setSelectedLocation(null);
+    selectedPickupPoint && setSelectedPickupPoint(null);
+    modalAction && setModalAction(null);
     setShowModal(false);
-    initForm();
   };
+
   const handleShow = (modalAction, index, optionalFormValues) => {
     setSelectedIndex(index);
     setModalAction(modalAction);
     if (optionalFormValues) {
-      if (modalAction === ModalActions.EDIT) {
+      if (modalAction === ModalActions.EDIT_PICKUP) {
+        setSelectedPickupPoint(optionalFormValues);
+      }
+      if (modalAction === ModalActions.EDIT_LOCATION) {
         const locationPup = allLocations.find(
           (lct) => lct.title === optionalFormValues.locationTitle
         );
-        if (locationPup) {
-          initForm(locationPup, ModalValidationRules[modalAction]);
-        } else {
-          initForm(optionalFormValues, ModalValidationRules[modalAction]);
-        }
-      } else if (modalAction === ModalActions.EDIT_PICKUP) {
-        initForm(optionalFormValues, ModalValidationRules[modalAction]);
+        setSelectedLocation(locationPup);
       }
-    } else
-      initForm(
-        ModalFormInitialValues[modalAction],
-        ModalValidationRules[modalAction]
-      );
+    }
     setShowModal(true);
   };
+
   const handleCheckChange = useCallback((pups) => setSelectedPUPs(pups), []);
 
   const handleSave = () => {
@@ -96,18 +91,14 @@ const Bulk_PickUpPoints = () => {
         "No Pick up point has been selected"
       );
     try {
-    validatePickupPoints(
-      selectedPUPs,
-      pupValidationRules,
-      selectedLocations,
-      pickuppoints
-    );
-    } catch (error) {
-      return alert(
-        "warning",
-        "Invalid Addition",
-        error.message
+      validatePickupPoints(
+        selectedPUPs,
+        pupValidationRules,
+        selectedLocations,
+        pickuppoints
       );
+    } catch (error) {
+      return alert("warning", "Invalid Addition", error.message);
     }
     try {
       const dto = new BulkPkpDto(
@@ -139,15 +130,13 @@ const Bulk_PickUpPoints = () => {
   return (
     <div className="page">
       <FlexHeader headerText="Upload Bulk Pick Up Points">
-        {!pickupPoints.length > 0 && (
-          <ButtonDownload href="/assets/pickup-points.xlsx">
-            Download Template
-          </ButtonDownload>
-        )}
+        <ButtonDownload href="/assets/pickup-points.xlsx">
+          Download Template
+        </ButtonDownload>
         <BackButton />
         {pickupPoints.length > 0 && <Button onClick={handleSave}>Save</Button>}
       </FlexHeader>
-      <FileInput onFileChange={(data) => setPickupPoints(data)} />
+      <SpreadSheetInput onFileChange={setPickupPoints} formatRow={formatSpreadSheetRow}/>
       {pickupPoints.length > 0 ? (
         <BulkPickUpTable
           xlsxData={pickupPoints}
@@ -163,14 +152,12 @@ const Bulk_PickUpPoints = () => {
         showModal={showModal}
         handleClose={handleClose}
         modalAction={modalAction}
-        form={values}
-        errors={errors}
-        handleValueChange={handleValueChange}
         locations={allLocations}
         selectedIndex={selectedIndex}
-        validateSubmission={validateForm}
         modifyPickupTableRow={modifyPickupTableRow}
         addLocationToPickup={addLocationToPickup}
+        selectedLocation={selectedLocation}
+        selectedPickupPoint={selectedPickupPoint}
       />
     </div>
   );

@@ -60,26 +60,7 @@ const loginRules = [
 ];
 
 const registerRules = [
-  {
-    field: 'email',
-    validator: (value) => typeof value === 'string' && value.length > 0,
-    message: 'Email is required',
-  },
-  {
-    field: "email",
-    validator: (value) => emailRegex.test(value),
-    message: "Invalid Credentials",
-  },
-  {
-    field: 'password',
-    validator: (value) => typeof value === 'string' && value.length > 0,
-    message: 'Password is required',
-  },
-  {
-    field: 'password',
-    validator: (value) => value.length >= 6,
-    message: 'Password must be at least 6 characters',
-  }
+    ...loginRules
 ];
 
 const hashPassword = async (req) => {
@@ -111,12 +92,4 @@ const registerValidator = new Validator(registerRules);
 
 module.exports = { loginValidator, registerValidator, SuccessResponse, ErrorResponse, hashPassword, verifyPassword };
 
-// loginValidator.validate({ email: "test", password: "test" });
-// loginValidator.validate({ email: "test@test", password: "testhhh" });
-// registerValidator.validate({ email: "test", password: "test" });
-// registerValidator.validate({ email: "test@test", password: "testjjj" });
-
-
-// res.status(200).json(new SuccessResponse({ user: user }));
-// res.status(401).json(new ErrorResponse({ message: "Invalid credentials" }));
 

@@ -1,11 +1,25 @@
 const pool = require("../config/dbConfig");
+const { NOT_ENUM_VALUE } = require("../lib/constants");
+const {generateUniqueId, convertToCamelCase} = require("../lib/utils");
 
 async function createLocation(location) {
+  const {rows} = await pool.query(`SELECT * FROM brms.locations WHERE title = $1`, [location.title]);
+  if (rows.length > 0) {
+    throw new Error("Location with the provided title already exists");
+  }
+
+
   try {
-    const query =
-      "INSERT INTO brms.locations (id, title, lcda, city, area, description, landmark) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *";
+    const query = `
+      INSERT INTO 
+        brms.locations (id, title, lcda, city, area, description, landmark) 
+      VALUES 
+        ($1, $2, $3, $4, $5, $6, $7) 
+      RETURNING 
+        *, false AS is_referenced;
+    `;
     const value = [
-      location.id,
+      generateUniqueId(),
       location.title,
       location.lcda,
       location.city,
@@ -15,61 +29,80 @@ async function createLocation(location) {
     ];
     const { rows } = await pool.query(query, value);
     if (rows.length === 0) return null;
-    return rows[0];
+    return convertToCamelCase(rows[0]);
   } catch (error) {
+    if (error.code =  NOT_ENUM_VALUE) {
+      throw new Error("Thats not a registered lcda")
+    }
     console.log(error);
     throw new Error("Failed to create a new location");
   }
 }
 
-async function getLocations() {
+async function getLocations(tableName = "brms.locations") {
   try {
-    const query = 'SELECT * FROM brms.locations ORDER BY "id" ASC';
+    const query = `
+      SELECT DISTINCT ON (locations.id) 
+        locations.*, 
+        COALESCE(pickuppoints.location_id IS NOT NULL, false) AS is_referenced
+      FROM 
+        ${tableName}
+      LEFT JOIN 
+        brms.pickuppoints ON pickuppoints.location_id = locations.id
+      ORDER BY
+        locations.id;
+    `;
     const { rows } = await pool.query(query);
-    return rows;
+    return rows.map(convertToCamelCase);
   } catch (error) {
-    console.log(error)
     throw new Error("Failed to get locations");
   }
 }
 
 async function editLocation(location) {
+  const { rows } = await pool.query(`SELECT * FROM brms.locations WHERE title = $1`, [location.title]);
+  if (rows.length !== 1) {
+    throw new Error("Location with the provided title already exists");
+  }
   try {
-    const query =
-      'UPDATE brms.locations SET "title" = $1, "lcda" = $2, "city" = $3, "area" = $4, "description" = $5, "landmark" = $6 WHERE "id" = $7 RETURNING *';
-    const values = [
-      location.title,
-      location.lcda,
-      location.city,
-      location.area,
+    const query = `
+      UPDATE 
+        brms.locations 
+      SET 
+        "description" = $1, "landmark" = $2 
+      WHERE 
+        "id" = $3 
+      RETURNING 
+        *, COALESCE((SELECT true FROM brms.pickuppoints WHERE location_id = $3), false) AS is_referenced;
+    `;
+      const values = [
       location.description,
       location.landmark,
       location.id,
     ];
     const { rows } = await pool.query(query, values);
-    if (rows.length === 0) return null;
-    console.log(rows[0]);
-    return rows[0];
+    return convertToCamelCase(rows[0]);
   } catch (error) {
-    console.log(error);
+
     throw new Error("Failed to edit location");
   }
 }
 
 async function deleteLocation(locationId) {
   try {
-    const query =
-      'DELETE FROM brms.locations WHERE "id" = $1 RETURNING *';
+    const query = `
+      DELETE FROM 
+        brms.locations 
+      WHERE "id" = $1 
+      RETURNING *, COALESCE((SELECT true FROM brms.pickuppoints WHERE location_id = $1), false) AS is_referenced;
+    `;
     const values = [locationId];
     const { rows } = await pool.query(query, values);
-    if (rows.length === 0) return null;
-    // console.log(rows[0])
-    return rows;
+    return convertToCamelCase(rows[0]);
   } catch (error) {
     if (error.code === "23503") {
       throw new Error("Location is in use");
     }
-    console.log(error);
     throw new Error("Failed to delete location");
   }
 }
@@ -81,6 +114,3 @@ module.exports = {
   editLocation,
   deleteLocation,
 };
-
-// I need to edit location,
-// I will check if there is a location id, if there is a location id, I will edit the location, and send it to the database,

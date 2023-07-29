@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Average+Sans&family=Poppins&display=swap");
 
 html {
-  font-size: 15px;
+  font-size: 14px;
 }
 
 body {
@@ -43,8 +43,6 @@ a {
   text-decoration: none;
   color: var(--primary-text-color);
 }
-
-
 
 .single_pickup {
   width: 100%;
@@ -103,8 +101,16 @@ Modal {
   padding-block: 1em;
   margin-bottom: 1em;
 }
-.heading h1, .heading h2 {
+.heading h1,
+.heading h2 {
   margin: 0;
+}
+
+.bulktable_icons_delete_btn {
+  color: red;
+  margin-right: 1em;
+  cursor: pointer;
+  font-size: 1.3rem;
 }
 
 .btn-flex {
@@ -134,14 +140,11 @@ Modal {
   cursor: pointer;
 }
 
-
 .text-ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-
 
 .loader {
   width: 100%;
@@ -153,4 +156,36 @@ Modal {
 
 .read-only {
   background-color: rgb(233, 233, 233) !important;
+}
+
+.cp {
+  cursor: pointer;
+}
+
+.clr-red {
+  color: #f44;
+}
+
+.clr-blue {
+  color: #44f;
+}
+
+.clr-green {
+  color: #02a202;
+}
+
+.clr-yellow {
+  color: #ff4;
+}
+
+.clr-orange {
+  color: #f84;
+}
+
+.clr-purple {
+  color: #84f;
+}
+
+.clr-pink {
+  color: #f4f;
 }

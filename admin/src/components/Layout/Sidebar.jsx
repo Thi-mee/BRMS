@@ -8,13 +8,13 @@ const Sidebar = () => {
         <span className={style.title}>
           B.R.M.S.
         </span>
-      <NavLink to="/dashboard">Dashboard</NavLink>
+      <NavLink to="/">Dashboard</NavLink>
       <NavLink to="/pick_up_points" className={({isActive}) => isActive ? style.active : ''}>
-        Pick Up Point Mgt
+        Pick-Up Management
       </NavLink>
-      <NavLink to="/locations">Location</NavLink>
-      <NavLink to="/routes">Route Mgt</NavLink>
-      <NavLink to={'/manage-authorization'}>Authorization Workflow</NavLink>
+      <NavLink to="/locations">Location Management</NavLink>
+      <NavLink to="/routes">Route Management</NavLink>
+      <NavLink to={'/authorize-workflow'}>Authorization Workflow</NavLink>
     </div>
   );
 };

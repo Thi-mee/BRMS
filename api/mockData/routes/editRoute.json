@@ -1,0 +1,32 @@
+{
+  "endpoint": "api/editRoute",
+  "method": "PUT",
+  "params": [
+    {
+      "name": "id",
+      "type": "string",
+      "description": "Route id"
+    }
+  ],
+  "body": {
+    "name": "string",
+    "description": "string",
+    "title": "string",
+    "lcda": "string",
+    "startPoint": "string",
+    "endPoint": "string"
+  },
+  "response": {
+    "status": true,
+    "message": "Route edited successfully",
+    "data": {
+      "id": "string",
+      "name": "string",
+      "description": "string",
+      "title": "string",
+      "lcda": "string",
+      "startPoint": "string",
+      "endPoint": "string"
+    }
+  }
+}

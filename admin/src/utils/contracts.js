@@ -1,23 +1,4 @@
-
-
-const compareObjects = (obj1, obj2) => {
-  const loc1keys = Object.keys(obj1).sort();
-  const loc2keys = Object.keys(obj2).sort();
-  if (loc1keys.length !== loc2keys.length) {
-    return false;
-  } else {
-    const areEqual = loc1keys.every((key, index) => {
-      const objValue1 = obj1[key];
-      const objValue2 = obj2[loc2keys[index]];
-      return objValue1 === objValue2;
-    });
-    if (areEqual) {
-      return true;
-    } else {
-      return false
-    }
-  }
-}
+import {compareObjects} from "./utilities";
 
 export class PkpDto {
   pickuppoint = {};

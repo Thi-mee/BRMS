@@ -1,60 +1,63 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Form, Col, Row } from "react-bootstrap";
-import { InputField, TextAreaField } from "../Form/Fields";
+import { useFormContext } from "./shared/FormHandler";
+import { TextAreaField, TextField, SelectField } from "./shared/Fields";
+import SubmitBtn from "./shared/SubmitBtn";
+import withFormHandling from "./shared/withFormHandling";
+import LCDAs from '../../data/lcda.json'
 
-const LocationForm = ({errors, form, handleValueChange}) => {
+const LocationForm = ({ values: initialValues }) => {
+  const { handleSubmit, values, setFields } = useFormContext();
+  useEffect(() => {
+    if (initialValues) {
+      setFields(initialValues);
+    }
+  }, [initialValues, setFields]);
+
   return (
-    <Form>
+    <Form onSubmit={handleSubmit}>
       <Row className="mb-3">
-        <InputField
+        <TextField
           as={Col}
           md="6"
-          controlId="validationCustom01"
+          controlId={"loc-form-01"}
           label="Title"
           name="title"
-          readOnly={!!form.id}
+          readOnly={!!values.id}
           placeholder="Please enter a title"
-          value={form.title}
-          onChange={handleValueChange}
-          error={errors["title"]}
           required
         />
-        <InputField
+        <SelectField
           as={Col}
-          md="6"
-          controlId="validationCustom02"
-          label="LCDA"
-          name="lcda"
-          placeholder="Please enter a LCDA"
-          value={form.lcda}
-          onChange={handleValueChange}
-          error={errors["lcda"]}
+          md={6}
+          controlId={"loc-form-04"}
+          label={"LCDA"}
+          name={"lcda"}
+          placeholder={"Please select"}
+          options={LCDAs}
+          disabled={!!values.id}
           required
         />
       </Row>
       <Row className="mb-3">
-        <InputField
+        <TextField
           as={Col}
           md="6"
-          controlId="validationCustom03"
+          controlId={"loc-form-03"}
           label="City"
           name="city"
           placeholder="Please enter a city"
-          value={form.city}
-          onChange={handleValueChange}
-          error={errors["city"]}
+          readOnly={!!values.id}
           required
         />
-        <InputField
+        <TextField
           as={Col}
           md="6"
-          controlId="validationCustom04"
+          controlId={"loc-form-04"}
           label="Area"
           name="area"
           placeholder="Please enter a area"
-          value={form.area}
-          onChange={handleValueChange}
-          error={errors["area"]}
+          readOnly={!!values.id}
           required
         />
       </Row>
@@ -62,30 +65,73 @@ const LocationForm = ({errors, form, handleValueChange}) => {
         <TextAreaField
           as={Col}
           md="6"
-          controlId="validationCustom01"
+          controlId={"loc-form-05"}
           label="Description"
           name="description"
           placeholder="Please enter a description"
-          value={form.description}
-          onChange={handleValueChange}
-          error={errors["description"]}
           required
         />
         <TextAreaField
           as={Col}
           md="6"
-          controlId="validationCustom01"
+          controlId={"loc-form-06"}
           label="Landmark"
           name="landmark"
           placeholder="Please enter a landmark"
-          value={form.landmark}
-          onChange={handleValueChange}
-          error={errors["landmark"]}
           required
         />
       </Row>
+      <SubmitBtn text={"Submit"} />
     </Form>
   );
 };
 
-export default LocationForm;
+const initialState = {
+  title: "",
+  lcda: "",
+  city: "",
+  area: "",
+  description: "",
+  landmark: "",
+};
+
+const validationRules = [
+  {
+    name: "title",
+    label: "Title",
+    isRequired: true,
+    minLength: 3,
+    maxLength: 50,
+  },
+  {
+    name: "lcda",
+    label: "LCDA",
+    isRequired: true,
+  },
+  {
+    name: "city",
+    label: "City",
+    isRequired: true,
+  },
+  {
+    name: "area",
+    label: "Area",
+    isRequired: true,
+  },
+  {
+    name: "description",
+    label: "Description",
+    isRequired: true,
+    minLength: 3,
+    maxLength: 150,
+  },
+  {
+    name: "landmark",
+    label: "Landmark",
+    isRequired: true,
+    minLength: 3,
+    maxLength: 150,
+  },
+];
+
+export default withFormHandling({ initialState, validationRules, options: {} })(LocationForm);

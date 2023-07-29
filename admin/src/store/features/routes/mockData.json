@@ -1,5 +1,6 @@
 [
   {
+    "id": 1,
     "name": "Babablu",
     "title": "balablu is required",
     "lcda": "Ikorodu-North",
@@ -11,6 +12,7 @@
     "status": 0
   },
   {
+    "id": 2,
     "name": "Oshodi-Apapa",
     "title": "Oshodi Apapa",
     "lcda": "Oshodi",

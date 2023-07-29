@@ -1,51 +1,102 @@
+const { get } = require("../routes/authroute");
 const Validator = require("./validator");
 
-const addpickUpRules = [
-  {
-    field: "id",
-    validator: (value) => typeof value === "string" && value.length > 0,
-    message: "Kindly supply a pickup id",
-  },
+const validLcdas = [
+  "igbogboBaiyeku",
+  "ijede",
+  "ikoroduNorth",
+  "ikoroduWest",
+  "imota",
+];
+
+const getIdValidation = (field, label) => ({
+  field,
+  validator: (value) =>
+    typeof value === "string" && value.length > 6 && value.length < 32,
+  message: `invalid ${label} ${field ?? "id"}`,
+});
+
+const getNameValidations = (label) => [
   {
     field: "name",
     validator: (value) => typeof value === "string" && value.length > 0,
-    message: "Kindly supply a Pickup Name",
+    message: `Kindly supply a ${label} Name`,
   },
   {
     field: "name",
     validator: (value) => value.length > 2,
-    message: "Pickup Name is too short",
+    message: `${label} Name is too short`,
   },
   {
     field: "name",
     validator: (value) => value.length < 50,
-    message: "Pickup Name is too long",
+    message: `${label} Name is too long`,
   },
+];
+
+const getTitleValidations = (label) => [
   {
     field: "title",
     validator: (value) => typeof value === "string" && value.length > 0,
-    message: "Kindly supply a Pickup Title",
+    message: `Kindly supply a ${label} Title`,
   },
   {
     field: "title",
-    validator: (value) => value.length < 150,
-    message: "Pickup title is too long",
+    validator: (value) =>
+      label === "Location" && !!value ? value.length > 2 : true,
+    message: `${label} title is too short`,
   },
+  {
+    field: "title",
+    validator: (value) =>
+      label === "Route" ? value.length < 150 : value.length < 100,
+    message: `${label} title is too long`,
+  },
+];
+
+const getDescriptionValidations = (label) => [
   {
     field: "description",
     validator: (value) => typeof value === "string" && value.length > 0,
-    message: "Kindly supply a Pickup Description",
+    message: `Kindly supply a ${label} Description`,
   },
   {
     field: "description",
     validator: (value) => value.length > 2,
-    message: "Pickup Description is too short",
+    message: `${label} Description is too short`,
   },
   {
     field: "description",
-    validator: (value) => value.length < 150,
-    message: "Pickup Description is too long",
+    validator: (value) => value.length < 300,
+    message: `${label} Description is too long`,
   },
+];
+
+const getLcdaValidation = () => ({
+  field: "lcda",
+  validator: (value) => validLcdas.includes(value),
+  message: "Kindly supply a valid LCDA",
+});
+
+const getLandMarkValidation = () => [
+  {
+    field: "landmark",
+    validator: (value) => typeof value === "string" && value.length > 0,
+    message: "Kindly supply a Landmark",
+  },
+  {
+    field: "landmark",
+    validator: (value) => typeof value === "string" && value.length > 2,
+    message: "Landmark is too short",
+  },
+  {
+    field: "landmark",
+    validator: (value) => typeof value === "string" && value.length < 150,
+    message: "Landmark is too long",
+  },
+];
+
+const getBusStopValidation = () => [
   {
     field: "busStop",
     validator: (value) => typeof value === "string" && value.length > 0,
@@ -61,63 +112,41 @@ const addpickUpRules = [
     validator: (value) => value.length < 50,
     message: "Pickup Bus Stop is too long",
   },
+];
 
+const getArrandDepTimeValidation = (field, label) => [
   {
-    field: "code",
-    validator: (value) => typeof value === "string" && value.length > 0,
-    message: "Kindly supply a Pickup Code",
-  },
-  {
-    field: "code",
-    validator: (value) => value.length > 10,
-    message: "Pickup Code is too short",
-  },
-  {
-    field: "code",
-    validator: (value) => value.length < 50,
-    message: "Pickup Code is too long",
-  },
+    "field": field,
+    validator: (value) => typeof value === "string" && value.length === 6,
+    message: `Pickup point ${label} time must be in the format HH:MM`
+  }
+]
 
+const addpickUpRules = [
+  ...getNameValidations("Pickup"),
+  // ...getTitleValidations("Pickup"),
+  ...getDescriptionValidations("Pickup"),
+  ...getBusStopValidation(),
   {
     field: "status",
-    validator: (value) => typeof value === "string" && value.length > 0,
-    message: "Kindly supply a valid Pickup Status",
+    validator: (value) => value === "active" || value === "inactive",
+    message: "Kindly supply a valid Pickup point status",
   },
-
   {
-    field: "locationId",
-    validator: (value) =>
-      typeof value === "string" && value.length > 6 && value.length < 25,
-    message: "Kindly supply a Pickup Location",
+    field: "startOrEnd",
+    validator: (value) => typeof value === "boolean",
+    message: "Kindly supply a valid Pickup point startOrEnd",
   },
 ];
 
+const addPickUpRulesWithLocationId = [
+  ...addpickUpRules,
+  getIdValidation("locationId"),
+];
+
 const addLocationRules = [
-  {
-    field: "title",
-    validator: (value) => typeof value === "string" && value.length > 0,
-    message: "Kindly supply a Location Title",
-  },
-  {
-    field: "title",
-    validator: (value) => typeof value === "string" && value.length < 150,
-    message: "Location Title is too long",
-  },
-  {
-    field: "lcda",
-    validator: (value) => typeof value === "string" && value.length > 0,
-    message: "Kindly supply a Location LCDA",
-  },
-  {
-    field: "lcda",
-    validator: (value) => typeof value === "string" && value.length > 2,
-    message: "Location LCDA is too short",
-  },
-  {
-    field: "lcda",
-    validator: (value) => typeof value === "string" && value.length < 50,
-    message: "Location LCDA is too long",
-  },
+  ...getTitleValidations("Location"),
+  getLcdaValidation("Location"),
   {
     field: "city",
     validator: (value) => typeof value === "string" && value.length > 0,
@@ -148,42 +177,78 @@ const addLocationRules = [
     validator: (value) => typeof value === "string" && value.length < 50,
     message: "Location Area is too long",
   },
+  ...getDescriptionValidations("Location"),
+  ...getLandMarkValidation(),
+];
+
+const addRouteRules = [
+  ...getNameValidations("Route"),
+  ...getDescriptionValidations("Route"),
+  getIdValidation("startPointId", "Route"),
+  getIdValidation("endPointId", "Route"),
+  getLcdaValidation(),
+];
+const editRouteRules = [
+  ...addRouteRules,
+  getIdValidation("id", "Route"),
+];
+
+const editLocationRules = [
+  getIdValidation("id", "Location"),
+  ...getTitleValidations("Location"),
+  ...getDescriptionValidations("Location"),
+  ...getLandMarkValidation(),
+];
+
+const editPickUpRules = [
+  getIdValidation("id", "Pickup"),
+  ...getTitleValidations("Pickup"),
+  ...getDescriptionValidations("Pickup"),
+  ...getBusStopValidation(),
   {
-    field: "description",
-    validator: (value) => typeof value === "string" && value.length > 0,
-    message: "Kindly supply a Location Description",
+    field: "status",
+    validator: (value) =>
+      value === "active" || value === "inactive" || value === "suspended",
+    message: "Kindly supply a valid Pickup point status",
   },
   {
-    field: "description",
-    validator: (value) => typeof value === "string" && value.length > 2,
-    message: "Location Description is too short",
-  },
-  {
-    field: "description",
-    validator: (value) => typeof value === "string" && value.length < 300,
-    message: "Location Description is too long",
-  },
-  {
-    field: "landmark",
-    validator: (value) => typeof value === "string" && value.length > 0,
-    message: "Kindly supply a Location Landmark",
-  },
-  {
-    field: "landmark",
-    validator: (value) => typeof value === "string" && value.length > 2,
-    message: "Location Landmark is too short",
-  },
-  {
-    field: "landmark",
-    validator: (value) => typeof value === "string" && value.length < 150,
-    message: "Location Landmark is too long",
+    field: "startOrEnd",
+    validator: (value) => typeof value === "boolean",
+    message: "Kindly supply a valid Pickup point startOrEnd",
   },
 ];
 
-const pickUpValidator = new Validator(addpickUpRules);
-const locationValidator = new Validator(addLocationRules);
+const scheduleRouteRules = [
+  getIdValidation("route_id", "Route"),
+  getIdValidation("pickuppoint_id", "Pickup"),
+  ...getArrandDepTimeValidation("arrival_time", "arrival"),
+  ...getArrandDepTimeValidation("departure_time", "departure"),
+  {
+    field: "service",
+    validator: (value) => typeof value === "number" && value === 0 || value === 1,
+    message: "Kindly supply a valid service time",
+  }
+];
+
+const createPickUpValidator = new Validator(addpickUpRules);
+const editPickUpValidator = new Validator(editPickUpRules);
+const createLocationValidator = new Validator(addLocationRules);
+const editLocationValidator = new Validator(editLocationRules);
+const pickUpWithLocationIdValidator = new Validator(
+  addPickUpRulesWithLocationId
+);
+const addRouteValidator = new Validator(addRouteRules);
+const editRouteValidator = new Validator(editRouteRules);
+const scheduleRouteValidator = new Validator(scheduleRouteRules)
+
 
 module.exports = {
-  pickUpValidator,
-  locationValidator,
+  createPickUpValidator,
+  editPickUpValidator,
+  createLocationValidator,
+  editLocationValidator,
+  pickUpWithLocationIdValidator,
+  routeValidator: addRouteValidator,
+  editRouteValidator,
+  scheduleRouteValidator
 };

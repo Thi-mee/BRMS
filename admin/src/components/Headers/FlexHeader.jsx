@@ -1,10 +1,11 @@
 import React from "react";
+import {Button} from "react-bootstrap";
 
 const FlexHeader = ({headerText, children}) => {
   return (
     <div className="heading">
       <h1>{headerText}</h1>
-      <div className="btn-flex">
+      <div className="d-flex gap-1 align-items-center">
         {children}
       </div>
     </div>

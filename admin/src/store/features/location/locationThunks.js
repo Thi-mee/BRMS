@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { apiCall, getAxiosInstance } from "../../../utils/api";
 
-const apiEndPoints = 'http://localhost:5000/api/location'
+const apiEndPoints = 'http://localhost:5000/api/locations'
 
 const api = getAxiosInstance(apiEndPoints);
 
@@ -13,7 +13,7 @@ export const fetchAllLocations = createAsyncThunk('locations/fetch', async () =>
 // delete location thunk
 export const deleteLocation = createAsyncThunk('locations/delete', async (id) => {
     const response = await apiCall(api, `/${id}`, 'delete', {});
-    return response.data[0];
+    return response.data;
 })
 
 // edit location thunk

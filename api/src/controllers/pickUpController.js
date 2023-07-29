@@ -1,115 +1,121 @@
 const { ErrorResponse } = require("../lib/pickup");
-const { generateUniqueId, generateCode } = require("../lib/utils");
-const {
-  pickUpValidator,
-  locationValidator,
-} = require("../lib/validationRules");
+const { handleValidationError } = require("../lib/utils");
+const validators = require("../lib/validationRules");
 const pickUpService = require("../services/pickUpService");
-const locationService = require("../services/locationService");
 const { SuccessResponse } = require("../lib/pickup");
+const {
+  createLocationAndPickup,
+} = require("../services/pickupLocationService");
 
-const handleValidationError = (res, errors) => {
-  return res
-    .status(400)
-    .json(new ErrorResponse({ message: errors.map((i) => i.message).join(", ") }));
-}
-
-const addPickUp = async (req, res, next) => {
-  let isLocationCreated = false;
-  if (req.body.location) {
-    const errors = locationValidator.validate(req.body.location);
-    if (errors.length > 0) return handleValidationError(res, errors);
-
-    req.body.location.id = generateUniqueId();
-    await locationService.createLocation(
-      req.body.location
-    );
-    isLocationCreated = true;
-    req.body.locationId = req.body.location.id
-    delete req.body.location;
-  }
-
-  req.body.id = generateUniqueId();
-  req.body.code = generateCode(req.body.name);
-  const errors = pickUpValidator.validate(req.body);
-  if (errors.length > 0) return handleValidationError(res, errors);
+const addPickUp = async (req, res) => {
+  let pickupPoint;
 
   try {
-    const retVal = await pickUpService.addPickUp(req.body);
-    return res
-      .status(201)
-      .json(
-        new SuccessResponse({
-          data: retVal,
-          message: "Pick Up Point added successfully",
+    if (req.body.locationId) {
+      const errors = validators.pickUpWithLocationIdValidator.validate(
+        req.body
+      );
+      if (errors.length > 0) return handleValidationError(res, errors);
+      pickupPoint = await pickUpService.addPickUp(req.body);
+    } else if (req.body.location) {
+      let errors = validators.createLocationValidator.validate(
+        req.body.location
+      );
+      if (errors.length > 0) return handleValidationError(res, errors);
+      errors = validators.createPickUpValidator.validate(req.body);
+      if (errors.length > 0) return handleValidationError(res, errors);
+      pickupPoint = await createLocationAndPickup(req.body);
+    } else {
+      return res.status(400).json(
+        new ErrorResponse({
+          message: "Invalid request body. Expected locationId or location",
         })
       );
-  } catch (error) {
-    if (isLocationCreated) {
-      await locationService.deleteLocation(req.body.locationId);
     }
+    return res.status(201).json(
+      new SuccessResponse({
+        data: pickupPoint,
+        message: "Pick Up Point added successfully",
+      })
+    );
+  } catch (error) {
+    console.log(error);
     return res.status(409).json(new ErrorResponse({ message: error.message }));
   }
 };
 
-const addBulkPickups = async (req, res, next) => {
+const addBulkPickups = async (req, res) => {
   const { body } = req;
   const bulkErrors = [];
-
   if (!Array.isArray(body)) {
-    return res.status(400).json(new ErrorResponse({ message: 'Invalid request body. Expected an array.' }));
+    return res.status(400).json(
+      new ErrorResponse({
+        message: "Invalid request body. Expected an array.",
+      })
+    );
   }
 
-  const pickupPromises = body.map(async (pickup) => {
-    if (pickup.location) {
-      const errors = locationValidator.validate(pickup.location);
+  const pickupCreationPromises = body.map(async (pickup) => {
+    if (pickup.locationId) {
+      const errors = validators.pickUpWithLocationIdValidator.validate(pickup);
       if (errors.length > 0) return handleValidationError(res, errors);
-      pickup.location.id = generateUniqueId();
       try {
-        await locationService.createLocation(pickup.location);
-        pickup.locationId = pickup.location.id;
-        delete pickup.location;
-      } catch (error) {
-        bulkErrors.push({ success: false, error: error.message });
+        return await pickUpService.addPickUp(pickup);
+      } catch (e) {
+        bulkErrors.push(e.message);
+        return null;
       }
-    }
+    } else if (pickup.location) {
+      let errors = validators.createLocationValidator.validate(
+        req.body.location
+      );
+      if (errors.length > 0) {
+        bulkErrors.push(errors.map((i) => i.message).join(", "));
+        return null;
+      }
 
-    pickup.id = generateUniqueId();
-    pickup.code = generateCode(pickup.name);
-    const errors = pickUpValidator.validate(pickup);
-    if (errors.length > 0) bulkErrors.push({ success: false, error: errors.map((i) => i.message).join(', ') });
-
-    try {
-      const retVal = await pickUpService.addPickUp(pickup);
-      return { success: true, data: retVal };
-    } catch (error) {
-      await locationService.deleteLocation(pickup.locationId);
-      return { success: false, error: error.message };
+      errors = validators.createPickUpValidator.validate(req.body);
+      if (errors.length > 0) {
+        bulkErrors.push(errors.map((i) => i.message).join(", "));
+        return null;
+      }
+      try {
+        return await createLocationAndPickup(pickup);
+      } catch (error) {
+        bulkErrors.push(error.message);
+        return null;
+      }
+    } else {
+      bulkErrors.push("Invalid request body. Expected locationId or location");
+      return null;
     }
   });
 
   try {
-    const results = await Promise.all(pickupPromises);
-    const successfulResults = results.filter((result) => result.success);
-    const failedResults = results.filter((result) => !result.success);
+    const results = await Promise.all(pickupCreationPromises);
+    const successfulResults = results.filter((result) => result !== null);
 
+    const successSnippet = `${successfulResults.length} pickup points added successfully.`;
+    const failedSnippet = `Failed to add ${bulkErrors.length} pickup points.`;
+    const anySuccessFul = successfulResults.length > 0;
+    const anyFailed = bulkErrors.length > 0;
     const response = {
-      status: successfulResults.length > 0 ? 'success' : 'failed',
-      message: 'Bulk pickups added successfully' + (failedResults.length > 0 ? '. Failed to add ' + failedResults.length + ' pickups' : ''),
-      data: successfulResults.map((result) => result.data)
-    }
+      status: anySuccessFul ? "success" : "failed",
+      message: `${anySuccessFul && successSnippet} ${
+        anyFailed && failedSnippet
+      }`,
+      data: successfulResults,
+      error: bulkErrors.length > 0 ? bulkErrors.join(", ") : null,
+    };
 
-    return res.status(
-      successfulResults.length > 0 ? 201 : 400
-    ).json(response);
+    return res.status(successfulResults.length > 0 ? 201 : 400).json(response);
   } catch (error) {
     return res.status(500).json(new ErrorResponse({ message: error.message }));
   }
 };
 
-
-const editPickUp = async (req, res, next) => {
-  const errors = pickUpValidator.validate(req.body);
+const editPickUp = async (req, res) => {
+  const errors = validators.createPickUpValidator.validate(req.body);
   if (errors.length > 0) {
     return res
       .status(400)
@@ -122,20 +128,18 @@ const editPickUp = async (req, res, next) => {
         .status(400)
         .json(new ErrorResponse({ message: "Failed to edit pick up point" }));
     }
-    return res
-      .status(200)
-      .json(
-        new SuccessResponse({
-          data: retVal,
-          message: "Pick Up Point updated Successfully",
-        })
-      );
+    return res.status(200).json(
+      new SuccessResponse({
+        data: retVal,
+        message: "Pick Up Point updated Successfully",
+      })
+    );
   } catch (error) {
     return res.status(500).json(new ErrorResponse({ message: error.message }));
   }
 };
 
-const getPickUp = async (req, res, next) => {
+const getPickUp = async (req, res) => {
   try {
     const retVal = await pickUpService.getPickUp(req.params.id);
     if (retVal === null)
@@ -148,7 +152,7 @@ const getPickUp = async (req, res, next) => {
   }
 };
 
-const getPickUpPoints = async (req, res, next) => {
+const getPickUpPoints = async (req, res) => {
   try {
     const retVal = await pickUpService.getPickUpPoints();
     if (retVal === null)
@@ -161,7 +165,7 @@ const getPickUpPoints = async (req, res, next) => {
   }
 };
 
-const deletePickUp = async (req, res, next) => {
+const deletePickUp = async (req, res) => {
   try {
     const retVal = await pickUpService.deletePickUp(req.params.id);
     if (retVal === null)
@@ -184,8 +188,5 @@ module.exports = {
   getPickUpPoints,
   getPickUp,
   editPickUp,
-  addBulkPickups
+  addBulkPickups,
 };
-
-
-

@@ -43,7 +43,7 @@ export const deletePickUpPoint = createAsyncThunk(
 export const updatePickUpPoints = createAsyncThunk(
   actionTypes.UPDATE_PICKUP_POINTS,
   async (form) => {
-    const response = await apiCall(api, "", "put", form);
+    const response = await apiCall(api, `/${form.id}`, "put", form);
     return response.data;
   }
 );

@@ -1,16 +1,15 @@
 import { memo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import style from "../../styles/PckUpPointRegMgt.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { getPickUpData } from "../../store/selectors";
 import { Button } from "../../components/Button/Button";
 import EmptyCtn from "../../components/EmptyContainer";
-import XPTable from "../../components/Table/XPTable";
 import FlexHeader from "../../components/Headers/FlexHeader";
 import { REQUEST_STATUS } from "../../utils/constants";
 import { clearError, resetStatus } from "../../store/features/pickup/pickUpPointSlice";
 import { deletePickUpPoint } from "../../store/features/pickup/pickUpPointThunks";
-import {AlertWithButtonAndFunctionAndCancel, alert} from  '../../utils/Alert'
+import {alertWithButtonFunctionAndCancel, alert} from '../../utils/alert'
+import PickUpTable from "../../components/Table/PickupPageTable";
 
 
 const PickupPointMgt = () => {
@@ -18,9 +17,9 @@ const PickupPointMgt = () => {
   const dispatch = useDispatch();
   const { pickuppoints, deleteStatus, error } = useSelector(getPickUpData);
 
-  const goToSinglePickUpPoint = () => navigate("/pick_up_points/add-single");
-  const goToBulkPickUpPoints = () => navigate("/pick_up_points/add-bulk");
-  const navigateToEdit = (id) => navigate(`/pick_up_points/edit/${id}`);
+  const goToSingleAdd = () => navigate("/pick_up_points/add-single");
+  const goToBulkAdd = () => navigate("/pick_up_points/add-bulk");
+  const navigateToEdit = (id) => {navigate(`/pick_up_points/edit/${id}`);};
 
   useEffect(() => {
     if (deleteStatus === REQUEST_STATUS.FAILED && error) {
@@ -37,10 +36,10 @@ const PickupPointMgt = () => {
 
   const deletePickupCallback = (row) => dispatch(deletePickUpPoint(row.id));
   const preDeletePickup = (row) =>
-    AlertWithButtonAndFunctionAndCancel(
+    alertWithButtonFunctionAndCancel(
       "warning",
-      "Delete Location",
-      "Are you sure you want to delete this location?",
+      "Delete Pick Up Point",
+      "Are you sure you want to delete this Pick Up Point?",
       "Yes",
       "No",
       deletePickupCallback.bind(null, row)
@@ -50,57 +49,32 @@ const PickupPointMgt = () => {
     <div className="page">
       <FlexHeader headerText="Pick Up Points">
         {pickuppoints.length > 0 && (
-          <div className="btn-flex">
-            <Button onClick={goToSinglePickUpPoint}>Add a Pick Up Point</Button>
-            <Button variant="outline-primary" onClick={goToBulkPickUpPoints}>
-              Add Multiple Pick Up Points
-            </Button>
-          </div>
+          <ActionButtons goToSingleAdd={goToSingleAdd} goToBulkAdd={goToBulkAdd} />
         )}
       </FlexHeader>
 
       {pickuppoints.length === 0 ? (
         <EmptyCtn text="There is no pickup point existing yet">
-          <div className={style.buttonContainer}>
-            <Button onClick={goToSinglePickUpPoint}>Add a Pick Up Point</Button>
-            <Button variant="outline-primary" onClick={goToBulkPickUpPoints}>
-              Add Multiple Pick Up Points
-            </Button>
+          <div className="d-flex gap-1">
+            <ActionButtons goToBulkAdd={goToBulkAdd} goToSingleAdd={goToSingleAdd} />
           </div>
         </EmptyCtn>
       ) : (
-        <XPTable
-          data={pickuppoints}
-          titles={["Name", "Title", "Nearest Bus Stop", "Status", "Action"]}
-          serial
-          renderitem={(pup, i) => (
-            <>
-              <td>{pup.name}</td>
-              <td>{pup.title}</td>
-              <td>{pup.busStop}</td>
-              <td>{pup.status}</td>
-              <td>
-                <div className="d-flex gap-2">
-                  <Button
-                    variant="warning"
-                    size="sm"
-                    onClick={() => navigateToEdit(pup.id)}>
-                    Edit
-                  </Button>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => preDeletePickup(pup)}>
-                    Delete
-                  </Button>
-                </div>
-              </td>
-            </>
-          )}
-        />
+          <PickUpTable navigateToEdit={navigateToEdit} pickupPoints={pickuppoints} preDelete={preDeletePickup} />
       )}
     </div>
   );
 };
 
 export default memo(PickupPointMgt);
+
+function ActionButtons ({goToSingleAdd, goToBulkAdd}) {
+  return (
+      <>
+        <Button onClick={goToSingleAdd}>Add a Pick Up Point</Button>
+        <Button variant="outline-primary" onClick={goToBulkAdd}>
+          Add Multiple Pick Up Points
+        </Button>
+      </>
+  )
+}

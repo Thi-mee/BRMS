@@ -1,5 +1,5 @@
 import { Table, Button } from "react-bootstrap";
-import XPTable from "./XPTable";
+import XPTable from "./shared/XPTable";
 
 export const LocationTable = ({
   locations,
@@ -17,7 +17,7 @@ export const LocationTable = ({
           <td className="text-ellipsis" style={{maxWidth: '120px'}}>{item.area}</td>
           <td className="text-ellipsis" style={{maxWidth: '120px'}}>{item.lcda}</td>
           <td className="text-ellipsis" style={{maxWidth: '120px'}}>
-            <Button onClick={() => onSelect(item)}>Select</Button>
+            <Button size="sm" onClick={() => onSelect(item)}>Select</Button>
           </td>
         </>
       )}
@@ -25,19 +25,7 @@ export const LocationTable = ({
   );
 };
 
-export const singlePickUpModal = (locations, setFields, handleClose) => {
-  const handleSettingLocation = (location) => {
-    setFields({
-      "location.id": location.id,
-      "location.title": location.title,
-      "location.landmark": location.landmark,
-      "location.description": location.description,
-      "location.city": location.city,
-      "location.lcda": location.lcda,
-      "location.area": location.area,
-    });
-    handleClose();
-  };
+export const SinglePickUpModal = ({locations, setSelectedLocation}) => {
 
   return (
     <Table>
@@ -60,7 +48,7 @@ export const singlePickUpModal = (locations, setFields, handleClose) => {
               <td>{value.area}</td>
               <td>{value.lcda}</td>
               <td>
-                <Button onClick={() => handleSettingLocation(value)}>
+                <Button onClick={() => setSelectedLocation(value)}>
                   Select
                 </Button>
               </td>

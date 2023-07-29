@@ -1,5 +1,5 @@
 const errorHandler = () => {
-  return (err, req, res, next) => {
+  return (err) => {
     console.log(err);
 
 

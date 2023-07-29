@@ -1,0 +1,36 @@
+{
+  "endpoint": "api/addRoutes",
+  "method": "POST",
+  "body": {
+    "name": "string",
+    "description": "string",
+    "title": "string",
+    "lcda": "string",
+    "startPoint": "string",
+    "endPoint": "string",
+    "pickup_routes": [
+      {
+        "id": "string"
+      }
+    ]
+  },
+  "response": {
+    "status": true,
+    "message": "Route added successfully",
+    "data": {
+      "id": "string",
+      "name": "string",
+      "description": "string",
+      "title": "string",
+      "lcda": "string",
+      "startPoint": "string",
+      "endPoint": "string",
+      "pickup_routes": [
+        {
+          "route_id": "string",
+          "id": "string"
+        }
+      ]
+    }
+  }
+}

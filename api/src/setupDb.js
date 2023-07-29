@@ -30,7 +30,11 @@ const createTables = async () => {
     await pool.query(`CREATE TABLE IF NOT EXISTS brms.routes(
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
-        description TEXT NOT NULL
+        description TEXT NOT NULL,
+        title TEXT NOT NULL,
+        lcda TEXT NOT NULL,
+        "startPoint" TEXT REFERENCES brms.pickuppoints(id),
+        "endPoint" TEXT REFERENCES brms.pickuppoints(id)
       )`);
 
     await pool.query(`CREATE TABLE IF NOT EXISTS brms.route_pickuppoints(

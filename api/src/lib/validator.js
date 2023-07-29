@@ -13,6 +13,11 @@ class Validator {
       const { field, validator, message } = rule;
       const value = data[field];
 
+
+      if (errors.length > 0 && errors.some((i) => i.field === field)) {
+        continue;
+      }
+      
       if (!validator(value)) {
         errors.push({ field, message });
       }
