@@ -1,31 +1,74 @@
 import XPTable from "../../components/Table/shared/XPTable";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { getPickUpData, getRoutesData } from "../../store/selectors";
 import FlexHeader from "../../components/Headers/FlexHeader";
 import { Button } from "../../components/Button/Button";
 import { Dropdown, DropdownButton, Modal } from "react-bootstrap";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import RouteForm from "../../components/Forms/RouteForm";
-import { alertWithButtonFunctionAndCancel } from "../../utils/alert";
+import { alert, alertWithButtonFunctionAndCancel, successAlertWithFunction } from "../../utils/alert";
+import { statusCheck } from "../../utils/utilities";
+import { resetStatus, clearError } from "../../store/features/routes/routeSlice";
+import { addRoute, updateRoute, deleteRoute } from "../../store/features/routes/routeThunks";
+import { REQUEST_STATUS } from "../../utils/constants";
+
+
 
 const RouteMgt = (props) => {
-  const { data: routes, error } = useSelector(getRoutesData);
+  const { data: routes, error, addStatus, editStatus, deleteStatus, mappedData } = useSelector(getRoutesData);
   const { pickuppoints } = useSelector(getPickUpData);
   const [showModal, setShowModal] = useState(false);
   const handleShow = () => setShowModal(true);
+  const dispatch = useDispatch();
 
   const [selectedRoute, setSelectedRoute] = useState(null);
 
-  const handleClose = () => {
+  console.log(mappedData)
+
+  const handleClose = useCallback(() => {
     if (selectedRoute) setSelectedRoute(null);
     setShowModal(false);
+  }, [selectedRoute]);
+  
+  useEffect(() => {
+    const [deleteSuccess, deleteFailed] = statusCheck(deleteStatus);
+    const [addSuccess, addFailed] = statusCheck(addStatus);
+    const [editSuccess, editFailed] = statusCheck(editStatus);
+    if ((deleteFailed || addFailed || editFailed) && error) {
+      alert("error", error);
+      dispatch(clearError());
+    }
+    if (deleteSuccess) {
+      alert("success", "Route deleted successfully");
+      dispatch(resetStatus("deleteStatus"));
+    }
+    if (addSuccess || editSuccess) {
+      const snippet = addSuccess ? "added" : "edited";
+      successAlertWithFunction(
+        `Route ${snippet} successfully`,
+        "",
+        handleClose
+      );
+      dispatch(resetStatus(addSuccess ? "addStatus" : "editStatus"));
+    }
+  }, [error, deleteStatus, addStatus, editStatus, dispatch, handleClose]);
+
+  const handleSave = (formValues) => {
+    if (selectedRoute === null) {
+      // add new route
+      dispatch(addRoute(formValues));
+      
+    } else {
+      // edit route
+      dispatch(updateRoute(formValues));
+    }
   };
 
   return (
     <div className={"page"}>
       <FlexHeader headerText={"Routes"}>
-        <Button onClick={handleShow}>Create new Route</Button>
+        <Button onClick={() => {handleShow()}}>Create new Route</Button>
       </FlexHeader>
 
       <RouteTable
@@ -42,7 +85,10 @@ const RouteMgt = (props) => {
             `Are you sure you want to delete ${dt.name} route?`,
             "Delete",
             "Cancel",
-            () => console.log(dt)
+            () => {
+              // delete route
+              dispatch(deleteRoute(dt.id));
+            }
           );
         }}
       />
@@ -55,7 +101,7 @@ const RouteMgt = (props) => {
         </Modal.Header>
         <Modal.Body>
           <RouteForm
-            onSubmit={(dt) => handleClose()}
+            onSubmit={(dt) => {handleSave(dt); handleClose();}}
             values={selectedRoute ?? null}
           />
         </Modal.Body>
@@ -73,7 +119,6 @@ function RouteTable(props) {
   const getPickupPointName = (id) => {
     const pickupPoint = props.pickuppoints.find((p) => p.id === id);
     return pickupPoint?.name ?? "Not found";
-  
   };
 
   const navigateToMappingPage = (id) => {

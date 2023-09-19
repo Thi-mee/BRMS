@@ -66,8 +66,8 @@ async function deleteRoute(routeId) {
     const { rows } = await pool.query(query, values);
     if (rows.length === 0) return null;
     return convertToCamelCase(rows[0]);
-    return rows[0];
   } catch (error) {
+    console.log(error)
     throw new Error("Failed to delete route");
   }
 }
@@ -75,53 +75,54 @@ async function deleteRoute(routeId) {
 async function editRoute(route) {
   try {
     const query =
-      'UPDATE brms.routes SET "name" = $1, "description" = $2, "title" = $3, "lcda" = $4, "startPoint" = $5, "endPoint" = $6 WHERE "id" = $7 RETURNING "id"';
+      'UPDATE brms.routes SET "name" = $1, "description" = $2, "title" = $3, "lcda" = $4, "start_point_id" = $5, "end_point_id" = $6 WHERE "id" = $7 RETURNING *';
     const values = [
       route.name,
       route.description,
       route.title,
       route.lcda,
-      route.startPoint,
-      route.endPoint,
+      route.startPointId,
+      route.endPointId,
       route.id,
     ];
     const { rows } = await pool.query(query, values);
     if (rows.length === 0) return null;
     return convertToCamelCase(rows[0]);
   } catch (error) {
+    console.log(error);
     throw new Error("Failed to edit route");
   }
 }
 
-async function mapPickupPointsToRoute(routeId, pickupPoints) {
-  try {
-    const checkPickupPointsQuery = `
-      SELECT id
-      FROM brms.pickup_points
-      WHERE id = ANY ($1::int[]);
-    `;
-    const checkPickupPointsValues = [pickupPoints];
-    const { rows: pickuppoints } = await pool.query(
-      checkPickupPointsQuery,
-      checkPickupPointsValues
-    );
-    if (pickupPoints.length !== pickuppoints.length) {
-      throw new Error("One or more pickup points do not exist");
-    }
+// async function mapPickupPointsToRoute(routeId, pickupPoints) {
+//   try {
+//     const checkPickupPointsQuery = `
+//       SELECT id
+//       FROM brms.pickup_points
+//       WHERE id = ANY ($1::int[]);
+//     `;
+//     const checkPickupPointsValues = [pickupPoints];
+//     const { rows: pickuppoints } = await pool.query(
+//       checkPickupPointsQuery,
+//       checkPickupPointsValues
+//     );
+//     if (pickupPoints.length !== pickuppoints.length) {
+//       throw new Error("One or more pickup points do not exist");
+//     }
 
-    const mapQuery = `
-      INSERT INTO brms.route_pickup_points (route_id, pickup_point_id)
-      VALUES ${pickuppoints
-        .map((_, index) => `($1, $${index + 2})`)
-        .join(", ")};
-    `;
-    const mapValues = [routeId, ...pickuppoints];
-    const { rows } = await pool.query(mapQuery, mapValues);
-    return rows[0];
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to map pickup points to route");
-  }
-}
+//     const mapQuery = `
+//       INSERT INTO brms.route_pickup_points (route_id, pickup_point_id)
+//       VALUES ${pickuppoints
+//         .map((_, index) => `($1, $${index + 2})`)
+//         .join(", ")};
+//     `;
+//     const mapValues = [routeId, ...pickuppoints];
+//     const { rows } = await pool.query(mapQuery, mapValues);
+//     return rows[0];
+//   } catch (error) {
+//     console.log(error);
+//     throw new Error("Failed to map pickup points to route");
+//   }
+// }
 
-module.exports = { addRoute, getRoutes, deleteRoute, editRoute, mapPickupPointsToRoute };
+module.exports = { addRoute, getRoutes, deleteRoute, editRoute };

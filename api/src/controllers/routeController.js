@@ -46,8 +46,9 @@ const getRoutes = async (req, res, next) => {
 
 const deleteRoute = async (req, res, next) => {
   try {
-    const retVal = await routeService.deleteRoute(req.params.id);
+    const retVal = await routeService.deleteRoute(req.params.routeId);
     if (!retVal) {
+      console.log(retVal);
       return res.status(404).json(errorResponseObj("Route not found"));
     }
     return res.status(200).json({
@@ -56,6 +57,7 @@ const deleteRoute = async (req, res, next) => {
       message: "Route deleted successfully",
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json(errorResponseObj(error.message));
   }
 };
@@ -75,6 +77,7 @@ const editRoute = async (req, res, next) => {
       message: "Route edited successfully",
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json(errorResponseObj(error.message));
   }
 };
@@ -147,6 +150,19 @@ const createRouteSchedule = async (req, res) => {
   }
 };
 
+const getMappedRoutes = async (req, res) => {
+  try {
+    const retVal = await mapService.getMappedRoutes();
+    return res.status(200).json({
+      success: true,
+      data: retVal,
+      message: "Routes fetched successfully",
+    });
+  } catch (error) {
+    return res.status(500).json(errorResponseObj(error.message));
+  }
+}
+
 module.exports = {
   addRoute,
   getRoutes,
@@ -154,4 +170,5 @@ module.exports = {
   editRoute,
   mapPickupPointsToRoute,
   createRouteSchedule,
+  getMappedRoutes
 };

@@ -7,6 +7,8 @@ const actionTypes = {
   ADD_ROUTES: "routes/add",
   DELETE_ROUTE: "routes/delete",
   UPDATE_ROUTES: "routes/update",
+  MAP_ROUTES: "routes/map",
+  FETCH_MAP_ROUTES: "routes/fetch/map"
 }
 
 const api = getAxiosInstance(apiEndPoint);
@@ -34,8 +36,8 @@ export const addRoute = createAsyncThunk(
 export const deleteRoute = createAsyncThunk(
   actionTypes.DELETE_ROUTE,
   async (id) => {
-    await apiCall(api, `/${id}`, "delete", {});
-    return id;
+    const response = await apiCall(api, `/${id}`, "delete", {});
+    return response.data;
   }
 );
 
@@ -44,5 +46,33 @@ export const updateRoute = createAsyncThunk(
   async (form) => {
     const response = await apiCall(api, `/${form.id}`, "put", form);
     return response.data;
+  }
+);
+
+// export const mapRoutes = createAsyncThunk(
+//   actionTypes.MAP_ROUTES,
+//   async (id) => {
+//     const response = await apiCall(api, `/${id}/map`, "put", {});
+//     return response.data;
+//   });
+
+export const mapRoutes = createAsyncThunk(
+  actionTypes.MAP_ROUTES,
+  async ({ id, arrayOfItems }) => { // Accept an object with 'id' and 'arrayOfItems'
+    console.log(id)
+    const response = await apiCall(api, `/${id}/map`, 'put',  arrayOfItems ); // Pass 'arrayOfItems' to the API call
+    return response.data;
+  }
+);
+
+export const fetchMappedRoutes = createAsyncThunk(
+  actionTypes.FETCH_MAP_ROUTES,
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiCall(api, "/map", "get", {});
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err?.message);
+    }
   }
 );

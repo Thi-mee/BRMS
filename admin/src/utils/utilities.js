@@ -1,6 +1,6 @@
 import {BINARY_REGEX, NO_SPECIAL_CHARS_REGEX, REQUEST_STATUS} from "./constants";
 
-function statusCheck (status ) {
+function statusCheck (status) {
   const success = status === REQUEST_STATUS.SUCCEEDED
   const failure = status === REQUEST_STATUS.FAILED
   const loading = status === REQUEST_STATUS.LOADING

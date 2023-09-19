@@ -11,6 +11,9 @@ export const getLocationFetchStatus = (state) => state.locations.fetchStatus;
 export const getRoutesData = (state) => state.routes;
 export const getRoutesFetchStatus = (state) => state.routes.fetchStatus;
 
+export const getMappedRoutesData = (state) => state.routes.mappedData;
+export const getMappedRoutesFetchStatus = (state) => state.routes.fetchMapStatus;
+
 export const validStartOrEndPoints = createSelector(
   getPickUpData,
   ({ pickuppoints }) => {
@@ -27,15 +30,13 @@ export const pickupPoints = createSelector(
     });
   }
 );
+
 export const notStartOrEndPickupPoints = createSelector(
   [getPickUpData, getLocationData],
   ({ pickuppoints }, { locations }) => {
     return pickuppoints
       .filter((point) => !point.startOrEnd)
-
       .map((point) => {
-        console.log(point);
-        console.log(locations);
         const location = locations.find((loc) => loc.id === point.locationId);
         return { ...point, location };
       });

@@ -6,6 +6,7 @@ router.get('/', routeController.getRoutes);
 router.delete('/:routeId', routeController.deleteRoute);
 router.put('/:routeId', routeController.editRoute);
 router.put('/:routeId/map', routeController.mapPickupPointsToRoute);
+router.get('/map', routeController.getMappedRoutes);
 router.put("/:routeId/schedule", routeController.createRouteSchedule);
 
 module.exports = router;

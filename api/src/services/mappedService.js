@@ -32,4 +32,15 @@ async function mapPickupPointsToRoute(route_id, pickuppoints) {
   }
 }
 
-module.exports = { mapPickupPointsToRoute };
+async function getMappedRoutes(){
+  try{
+    const query = "SELECT * FROM brms.route_pickuppoints";
+    const { rows } = await pool.query(query);
+    return rows.map(convertToCamelCase);
+  } catch (error){
+    console.log(error);
+    throw new Error("Failed to get mapped routes")
+  }
+}
+
+module.exports = { mapPickupPointsToRoute, getMappedRoutes };

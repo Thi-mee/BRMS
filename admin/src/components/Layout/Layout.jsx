@@ -6,10 +6,12 @@ import { useEffect } from "react";
 import { fetchPickupPoints } from "../../store/features/pickup/pickUpPointThunks";
 import { fetchAllLocations } from "../../store/features/location/locationThunks";
 import { fetchRoutes } from "../../store/features/routes/routeThunks";
+import { fetchMappedRoutes } from "../../store/features/routes/routeThunks";
 import {
   getLocationFetchStatus,
   getPickupFetchStatus,
   getRoutesFetchStatus,
+  getMappedRoutesData
 } from "../../store/selectors";
 import { REQUEST_STATUS } from "../../utils/constants";
 
@@ -18,16 +20,20 @@ const Layout = () => {
   const fetchLStatus = useSelector(getLocationFetchStatus);
   const fetchPStatus = useSelector(getPickupFetchStatus);
   const fetchRStatus = useSelector(getRoutesFetchStatus);
+  const fetchMRStatus = useSelector(getMappedRoutesData);
+
 
   const isLoading = () =>
     fetchLStatus === REQUEST_STATUS.LOADING &&
     fetchPStatus === REQUEST_STATUS.LOADING &&
-    fetchRStatus === REQUEST_STATUS.LOADING;
+    fetchRStatus === REQUEST_STATUS.LOADING &&
+    fetchMRStatus === REQUEST_STATUS.LOADING
 
   useEffect(() => {
     dispatch(fetchPickupPoints());
     dispatch(fetchAllLocations());
     dispatch(fetchRoutes());
+    dispatch(fetchMappedRoutes())
   }, [dispatch]);
 
   return (

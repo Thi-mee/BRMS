@@ -12,6 +12,7 @@ const XPTable = ({
   ...rest
 }) => {
   const [selectedRows, setSelectedRows] = useState([]);
+
   
   useEffect(() => {
     if (onSelect && typeof onSelect === "function")
@@ -34,6 +35,7 @@ const XPTable = ({
 
   const handleSelectAll = () => {
     if (selectedRows.length === data.length) {
+      console.log(selectedRows);
       setSelectedRows([]);
     } else {
       setSelectedRows(data.map((_, index) => index));
@@ -58,7 +60,7 @@ const XPTable = ({
               {selectMultiple && (
                 <input
                   type="checkbox"
-                  checked={selectedRows.length === data.length}
+                  // checked={selectedRows.length === data.length}
                   onChange={handleSelectAll}
                 />
               )}
