@@ -144,7 +144,7 @@ function RouteTable(props) {
         "Title",
         "Start point",
         "Stop point",
-        "Status",
+        // "Status",
         "PPT",
         "Actions",
       ]}
@@ -154,7 +154,7 @@ function RouteTable(props) {
           <td>{item.title}</td>
           <td>{getPickupPointName(item.startPointId)}</td>
           <td>{getPickupPointName(item.endPointId)}</td>
-          <td>{item.status}</td>
+          {/* <td>{item.status}</td> */}
           <td><Link>{
               props.numberofPpts(item)
             }</Link></td>

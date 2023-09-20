@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import FlexHeader from "../../components/Headers/FlexHeader";
 import { Button } from "react-bootstrap";
-import XPTable from "../../components/Table/shared/XPTable";
 import { useDispatch, useSelector } from "react-redux";
 import { getRoutesData } from "../../store/selectors";
 import { notStartOrEndPickupPoints } from "../../store/selectors";
@@ -44,21 +43,24 @@ const RouteMap = () => {
           variant="danger"
           onClick={() => {
             navigate(-1);
-          }}
-        >
+          }}>
           Back
         </Button>
         <Button
           onClick={() => {
             dispatch(mapRoutes({ id: id, arrayOfItems: mappedPups }));
-          }}
-        >
+          }}>
           {" "}
           Save Changes{" "}
         </Button>
       </FlexHeader>
       <section className="mapped-pickupPoints">
-        <h4>Mapped Pickup Points</h4>
+        <p style={{color: "#B11A"}}>Mapped pickup points are checked by default</p>
+        <RouteMappingTable
+          data={pickupPoints}
+          setMappedPups={setMappedPups}
+          mappedPups={mappedPups}
+        />
       </section>
       {/* <XPTable
         serial
@@ -75,11 +77,6 @@ const RouteMap = () => {
           </>
         )}
       /> */}
-      <RouteMappingTable
-        data={pickupPoints}
-        setMappedPups={setMappedPups}
-        mappedPups={mappedPups}
-      />
     </div>
   );
 };

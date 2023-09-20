@@ -67,9 +67,11 @@ const SingleAddOrEditPickUpP = () => {
       return;
     }
     const dto = new PkpDto(formValues, locations);
+    console.log(dto);
     if (id) {
       dispatch(updatePickUpPoints(dto.getUpdatePkp()));
     } else {
+      console.log(dto.getAddPkp());
       dispatch(addPickUpPoints(dto.getAddPkp()));
     }
   };

@@ -30,13 +30,17 @@ export class PkpDto {
       busStop: this.pickuppoint.busStop,
       description: this.pickuppoint.description,
       status: this.getStatus(this.pickuppoint.status),
+      startOrEnd: this.pickuppoint.startOrEnd,
     }
-    if (this.pickuppoint.location.id) {
-      const location = this.locations.find(loc => loc.id === this.pickuppoint.location.id);
+    const specificLocation = this.pickuppoint.location;
+    if (specificLocation.id) {
+      const location = this.locations.find(loc => loc.id === specificLocation.id);
       if (!location) {
-        throw new Error('Error selecting loaction ' + location.title);
+        throw new Error('Error selecting location ' + location.title);
       }
-      const isUnchanged = compareObjects(location, this.pickuppoint.location);
+      const {isReferenced, ...rest} = location;
+      const isUnchanged = compareObjects(rest, specificLocation);
+      console.log({isUnchanged, location, specificLocation})
       if (isUnchanged) {
         pkpDto.locationId = this.pickuppoint.location.id;
       } else {

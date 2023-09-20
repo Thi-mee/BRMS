@@ -104,7 +104,7 @@ const PickupFullForm = ({
           name={"busStop"}
           placeholder={"Please enter the nearest bus stop"}
           required
-          readOnly={values["busStop"]}
+          readOnly={!!values.id}
         />
       </Row>
       <Row className="mb-3">
@@ -138,7 +138,7 @@ const PickupFullForm = ({
       </Row>
       <div className="d-flex justify-content-between align-items-center pt-4 pb-4">
         <h3>Location</h3>
-        <Button variant="warning" onClick={handleShow} >
+        <Button variant="warning" onClick={handleShow}>
           Select Location
         </Button>
       </div>
@@ -212,7 +212,10 @@ const PickupFullForm = ({
         handleClose={handleClose}
         modalHeading={"Select Location"}
         closeBtn={"Close"}>
-        <SinglePickUpModal locations={locations} setSelectedLocation={setSelectedLocation} />
+        <SinglePickUpModal
+          locations={locations}
+          setSelectedLocation={setSelectedLocation}
+        />
       </XPModal>
     </Form>
   );

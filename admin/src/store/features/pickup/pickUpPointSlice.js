@@ -34,11 +34,11 @@ export const pickUpPointSlice = createSlice({
     builder
       .addCase(fetchPickupPoints.fulfilled, (state, action) => {
         state.fetchStatus = REQUEST_STATUS.SUCCEEDED;
-        state.pickuppoints = action.payload;
+        state.pickuppoints = action.payload ?? [];
       })
       .addCase(fetchPickupPoints.rejected, (state, action) => {
         state.fetchStatus = REQUEST_STATUS.FAILED;
-        state.error = action.payload.message;
+        state.error = action.payload.message ?? "Something went wrong";
       })
       .addCase(addPickUpPoints.pending, (state) => {
         state.addStatus = REQUEST_STATUS.LOADING;
@@ -50,7 +50,7 @@ export const pickUpPointSlice = createSlice({
       })
       .addCase(addPickUpPoints.rejected, (state, action) => {
         state.addStatus = REQUEST_STATUS.FAILED;
-        state.error = action.error.message;
+        state.error = action.error.message ?? "Something went wrong";
       })
       .addCase(deletePickUpPoint.pending, (state) => {
         state.deleteStatus = REQUEST_STATUS.LOADING;
@@ -65,7 +65,7 @@ export const pickUpPointSlice = createSlice({
       })
       .addCase(deletePickUpPoint.rejected, (state, action) => {
         state.deleteStatus = REQUEST_STATUS.FAILED;
-        state.error = action.error.message;
+        state.error = action.error.message ?? "Something went wrong";
       })
       .addCase(updatePickUpPoints.pending, (state) => {
         state.updateStatus = REQUEST_STATUS.LOADING;
@@ -80,7 +80,7 @@ export const pickUpPointSlice = createSlice({
       })
       .addCase(updatePickUpPoints.rejected, (state, action) => {
         state.updateStatus = REQUEST_STATUS.FAILED;
-        state.error = action.error.message;
+        state.error = action.error.message ?? "Something went wrong";
       })
       .addCase(addBulkPickUpPoints.pending, (state) => {
         state.addBulkStatus = REQUEST_STATUS.LOADING;
@@ -92,7 +92,7 @@ export const pickUpPointSlice = createSlice({
 
       })
       .addCase(addBulkPickUpPoints.rejected, (state, action) => {
-        state.error = action.error.message;
+        state.error = action.error.message ?? "Something went wrong";
         state.addBulkStatus = REQUEST_STATUS.FAILED;
       });
 
