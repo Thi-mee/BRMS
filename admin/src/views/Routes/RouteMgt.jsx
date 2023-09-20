@@ -5,7 +5,7 @@ import FlexHeader from "../../components/Headers/FlexHeader";
 import { Button } from "../../components/Button/Button";
 import { Dropdown, DropdownButton, Modal } from "react-bootstrap";
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import RouteForm from "../../components/Forms/RouteForm";
 import { alert, alertWithButtonFunctionAndCancel, successAlertWithFunction } from "../../utils/alert";
 import { statusCheck } from "../../utils/utilities";
@@ -22,10 +22,9 @@ const RouteMgt = (props) => {
   const handleShow = () => setShowModal(true);
   const dispatch = useDispatch();
 
+  // console.log(mappedData)
   const [selectedRoute, setSelectedRoute] = useState(null);
-
-  console.log(mappedData)
-
+  
   const handleClose = useCallback(() => {
     if (selectedRoute) setSelectedRoute(null);
     setShowModal(false);
@@ -65,6 +64,17 @@ const RouteMgt = (props) => {
     }
   };
 
+  const numberofPpts = (item) => {
+      const numberArray = mappedData.filter((route) => route.routeId === item.id);
+      const pickupMapped = pickuppoints.filter((ppt) => {
+        return numberArray.some((map) => {
+            return ppt.id === map.pickupPointId
+        })
+      } )
+      console.log(pickupMapped);
+      return numberArray.length
+  }
+
   return (
     <div className={"page"}>
       <FlexHeader headerText={"Routes"}>
@@ -91,6 +101,7 @@ const RouteMgt = (props) => {
             }
           );
         }}
+        numberofPpts={numberofPpts}
       />
 
       <Modal onHide={handleClose} show={showModal} size={"lg"}>
@@ -115,7 +126,6 @@ export default RouteMgt;
 function RouteTable(props) {
   const navigate = useNavigate();
 
-
   const getPickupPointName = (id) => {
     const pickupPoint = props.pickuppoints.find((p) => p.id === id);
     return pickupPoint?.name ?? "Not found";
@@ -135,6 +145,7 @@ function RouteTable(props) {
         "Start point",
         "Stop point",
         "Status",
+        "PPT",
         "Actions",
       ]}
       renderitem={(item, index) => (
@@ -144,6 +155,9 @@ function RouteTable(props) {
           <td>{getPickupPointName(item.startPointId)}</td>
           <td>{getPickupPointName(item.endPointId)}</td>
           <td>{item.status}</td>
+          <td><Link>{
+              props.numberofPpts(item)
+            }</Link></td>
           <td>
             <RouteDropdown
               id={item.id}

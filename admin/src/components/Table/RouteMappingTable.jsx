@@ -1,20 +1,26 @@
 import React, { useState } from "react";
-import Table from "react-bootstrap/Table";
+import { Table } from "react-bootstrap";
+import {  useSelector } from "react-redux/es/hooks/useSelector";
+import { getRoutesData } from "../../store/selectors";
 
-const RouteMappingTable = ({ data, setMappedPups, mappedPups }) => {
+const RouteMappingTable = ({ data, setMappedPups }) => {
   const [isChecked, setIsChecked] = useState(false);
+  const [mappedToARoute, setMappedToARoute] = useState(true);
+
+  const {  mappedData } = useSelector(getRoutesData);
 
   const handleCheckboxChange = (event, item) => {
+    setMappedToARoute(event.target.checked)
+    !mappedToARoute ? setMappedToARoute(true) : setMappedToARoute(false)
     setIsChecked(event.target.checked);
 
     if (event.target.checked) {
-        setMappedPups(prevMappedPups => [...prevMappedPups, item.id]);
+      setMappedPups((prevMappedPups) => prevMappedPups.includes(item.id)
+      ? prevMappedPups.filter((id) => id === item.id)
+      : [...prevMappedPups, item.id]);
     } else {
-        setMappedPups((prevMappedPups) =>
-        prevMappedPups.includes(item.id)
-          ? prevMappedPups.filter((id) => id !== item.id)
-          : [...prevMappedPups, item.id]
-      );
+      console.log(event.target.checked);
+      setMappedPups([]);
     }
   };
 
@@ -42,9 +48,17 @@ const RouteMappingTable = ({ data, setMappedPups, mappedPups }) => {
                 <td
                   type="checkbox"
                   checked={isChecked}
-                  onChange={(event)=>{handleCheckboxChange(event, item)}}
+                  onChange={(event) => {
+                    handleCheckboxChange(event, item);
+                  }}
                 >
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    checked={mappedData.some((mapped)=> mapped?.pickuppointId === item.id) ? mappedToARoute : isChecked}
+                    onChange={(event) => {
+                      handleCheckboxChange(event, item);
+                    }}
+                  />
                 </td>
                 <td>{item.name}</td>
                 <td>{item.title}</td>
@@ -61,3 +75,5 @@ const RouteMappingTable = ({ data, setMappedPups, mappedPups }) => {
 };
 
 export default RouteMappingTable;
+
+// SEND AN EMAIL TO MR. KEHINDE TODAY
