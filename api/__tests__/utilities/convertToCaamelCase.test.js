@@ -1,4 +1,4 @@
-const { convertToCamelCase } = require("../../src/lib/utils");
+const { convertToCamelCase } = require("../../src/utils/helper");
 
 describe("Converts Snake Case to camel case", () => {
   test("converts snake_case to camelCase", () => {

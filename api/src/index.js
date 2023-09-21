@@ -5,6 +5,7 @@ const session = require("express-session");
 const passport = require("passport");
 const setUpDb = require("./setupDb");
 const pool = require("./config/dbConfig");
+const morganMiddleware = require("./middlewares/morganMiddleware");
 
 const app = express();
 dotenv.config();
@@ -16,6 +17,7 @@ pool.connect((err, client, done) => {
 });
 
 app.use(cors());
+app.use(morganMiddleware);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

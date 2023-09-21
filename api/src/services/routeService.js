@@ -1,6 +1,6 @@
 const pool = require("../config/dbConfig");
 const { UNIQUE_VIOLATION_CODE, FOREIGN_KEY_VIOLATION_CODE } = require("../lib/constants");
-const { generateUniqueId, convertToCamelCase } = require("../lib/utils");
+const { generateUniqueId, convertToCamelCase } = require("../utils/helper");
 
 
 async function addRoute(route) {

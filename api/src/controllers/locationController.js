@@ -3,15 +3,16 @@ const {
   createLocationValidator,
 } = require("../lib/validationRules");
 const locationService = require("../services/locationService");
+const {throwApplicationError} = require("../middlewares/errorHandler");
 
 const validationError = (errors) => errors.map((i) => i.message).join(", ");
 const errorResponseObj = (message) => ({ success: false, message });
 
-const getLocations = async (req, res) => {
+const getLocations = async (req, res, next) => {
   try {
     const retVal = await locationService.getLocations();
     if (retVal === null) {
-      return res.status(400).json(errorResponseObj("Failed to get locations"));
+      throwApplicationError(400, "Failed to get locations")
     }
     return res.status(200).json({
       success: true,
@@ -19,19 +20,19 @@ const getLocations = async (req, res) => {
       message: "Locations fetched successfully",
     });
   } catch (error) {
-    return res.status(500).json(errorResponseObj(error.message));
+    next(error)
   }
 };
 
-const editLocation = async (req, res) => {
+const editLocation = async (req, res, next) => {
   const errors = editLocationValidator.validate(req.body);
   if (errors.length > 0) {
-    return res.status(400).json(errorResponseObj(validationError(errors)));
+    throwApplicationError(400, validationError(errors))
   }
   try {
     const retVal = await locationService.editLocation(req.body);
     if (retVal === null) {
-      return res.status(400).json(errorResponseObj("Failed to edit location"));
+      throwApplicationError(400, "Failed to edit location")
     }
     return res.status(200).json({
       success: true,
@@ -39,7 +40,7 @@ const editLocation = async (req, res) => {
       message: "Location edited successfully",
     });
   } catch (error) {
-    return res.status(500).json(errorResponseObj(error.message));
+    next(error)
   }
 };
 
@@ -62,10 +63,10 @@ const deleteLocation = async (req, res) => {
   }
 };
 
-const addLocation = async (req, res) => {
+const addLocation = async (req, res, next) => {
   const errors = createLocationValidator.validate(req.body);
   if (errors.length > 0) {
-    return res.status(400).json(errorResponseObj(validationError(errors)));
+    throwApplicationError(400, validationError(errors))
   }
   try {
     const newLocation = await locationService.createLocation(req.body);
@@ -75,7 +76,7 @@ const addLocation = async (req, res) => {
       message: "Location added successfully",
     });
   } catch (error) {
-    return res.status(500).json(errorResponseObj(error.message));
+    next(error)
   }
 };
 
