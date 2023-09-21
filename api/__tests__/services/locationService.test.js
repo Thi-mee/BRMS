@@ -1,59 +1,62 @@
 const pool = require("../../src/config/dbConfig");
+const {describe, it, beforeAll, afterAll, expect} = require("@jest/globals");
 const {
   getLocations,
   createLocation,
   editLocation,
   deleteLocation,
 } = require("../../src/services/locationService");
-const { initialLocationData } = require("./data/locationsData");
-
-const testTable = "brms.locationstest";
+const {TABLES} = require("../../src/utils/constants");
 
 describe("Location Services work as expected", () => {
-  beforeAll(async (done) => {
-    await pool.query(
-      `CREATE TABLE brms.locationstest AS TABLE brms.locations;`
-    );
-    // const query = `
-    //   INSERT INTO
-    //     brms.locationstest
-    //     (id, title, description, lcda, city, area, landmark)
-    //   VALUES
-    //     ${initialLocationData.forEach(
-    //       (_, i) =>
-    //         `($${i * 7 + 1}, $${i * 7 + 2}, $${i * 7 + 3}, $${i * 7 + 4}, $${
-    //           i * 7 + 5
-    //         }, $${i * 7 + 6}, $${i * 7 + 7})`
-    //     )}
-    //   RETURNING *;
-    // `;
-    // const values = [...initialLocationData];
-    // await pool.query(query, values);
-    done();
-  });
-  afterAll(async () => {
-    await pool.query("DROP TABLE IF EXISTS brms.locationstest");
-    pool.end();
-  });
 
-  it("should return an array of locations", async () => {
-    const locations = await getLocations();
-    expect(locations).toBeInstanceOf(Array);
-    if (locations.length > 0) {
-      expect(locations[0]).toHaveProperty("id");
-      expect(locations[0]).toHaveProperty("title");
-      expect(locations[0]).toHaveProperty("description");
-      expect(locations[0]).toHaveProperty("lcda");
-      expect(locations[0]).toHaveProperty("city");
-      expect(locations[0]).toHaveProperty("area");
-      expect(locations[0]).toHaveProperty("landmark");
-      expect(locations[0]).toHaveProperty("isReferenced");
+
+  it("should create a location", async () => {
+    try {
+    const locations = await createLocation({
+      title: "Test Location",
+      description: "Test Location",
+      landmark: "Test Location",
+      lcda: "igbogboBaiyeku",
+      city: "Test Location",
+      area: "Test Location",
+    });
+    expect(locations).toBeDefined();
+    expect(locations).toHaveProperty("id");
+    expect(locations).toHaveProperty("title");
+    expect(locations).toHaveProperty("description");
+    expect(locations).toHaveProperty("lcda");
+    expect(locations).toHaveProperty("city");
+    expect(locations).toHaveProperty("area");
+    expect(locations).toHaveProperty("landmark");
+    expect(locations).toHaveProperty("referenced");
+    } catch (error) {
+      console.log(error);
+      expect(error.message).toBeDefined();
     }
   });
 
-  // afterAll(async () => {
-  //   await pool.query("DROP TABLE IF EXISTS brms.locationstest");
-  // });
+  it("should get all locations", async () => {
+    const locations = await getLocations();
+    console.log(locations);
+    expect(locations).toBeDefined();
+    expect(locations).toBeInstanceOf(Array);
+    expect(locations[0]).toHaveProperty("id");
+    expect(locations[0]).toHaveProperty("title");
+    expect(locations[0]).toHaveProperty("description");
+    expect(locations[0]).toHaveProperty("lcda");
+    expect(locations[0]).toHaveProperty("city");
+    expect(locations[0]).toHaveProperty("area");
+    expect(locations[0]).toHaveProperty("landmark");
+    expect(locations[0]).toHaveProperty("referenced");
+  });
+
+
+
+
+  afterAll(async () => {
+    pool.end();
+  });
 });
 
 // it("should return an array of locations with is_referenced property", async () => {

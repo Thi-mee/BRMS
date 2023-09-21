@@ -1,6 +1,6 @@
 const pool = require("../config/dbConfig");
 const { UNIQUE_VIOLATION_CODE } = require("../lib/constants");
-const { generateUniqueId, generateCode } = require("../lib/utils");
+const { generateUniqueId, generateCode } = require("../utils/helper");
 
 /**
  * Creates a pickupPoint with a new location

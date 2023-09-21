@@ -1,25 +1,36 @@
 const pool = require("../config/dbConfig");
-const { convertToCamelCase } = require("../lib/utils");
+const { convertToCamelCase } = require("../utils/helper");
+const PickupPoint = require("../models/pickup_point");
+const { throwApplicationError } = require("../middlewares/errorHandler");
+const { ROUTE_PICKUP_POINT } = require("../utils/constants").TABLES;
+
+async function demapRoute(route_id) {
+  try {
+    const query = `
+      DELETE FROM ${ROUTE_PICKUP_POINT}
+      WHERE route_id = $1
+      RETURNING *;
+    `;
+    const { rows } = await pool.query(query, [route_id]);
+    return rows.map(convertToCamelCase);
+  } catch (error) {
+    console.log(error);
+    throwApplicationError(500, "Failed to delete route");
+  }
+}
+
+
 
 async function mapPickupPointsToRoute(route_id, pickuppoints) {
-  const checkPickupPointsQuery = `
-    SELECT id
-    FROM brms.pickuppoints
-    WHERE id = ANY ($1::text[]);
-  `;
-  const checkPickupPointsValues = [pickuppoints];
-  const { rows: pickupPoints } = await pool.query(
-    checkPickupPointsQuery,
-    checkPickupPointsValues
-  );
-  if (pickupPoints.length !== pickuppoints.length) {
-    throw new Error("One or more pickup points do not exist");
+  const isAllValid = await PickupPoint.verifyPickupPoints(pickuppoints);
+  if (!isAllValid) {
+    throw new Error("One or more pickup points is invalid");
   }
-
+  await demapRoute(route_id);
   try {
     const mapQuery = `
       INSERT INTO brms.route_pickuppoints (route_id, pickuppoint_id)
-      VALUES ${pickupPoints.map((_, index) => `($1, $${index + 2})`).join(", ")}
+      VALUES ${pickuppoints.map((_, index) => `($1, $${index + 2})`).join(", ")}
       RETURNING *;
     `;
 

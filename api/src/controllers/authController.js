@@ -5,12 +5,13 @@ const {
   SuccessResponse,
 } = require("../lib/auth");
 const authService = require("../services/authService");
-const { generateUniqueId } = require("../lib/utils");
+const { generateUniqueId } = require("../utils/helper");
+const {throwApplicationError} = require("../middlewares/errorHandler");
 
 const register = async (req, res) => {
   const errors = registerValidator.validate(req.body);
   if (errors.length > 0) {
-    return res.status(400).json(ErrorResponse({ message: errors.join(", ") }));
+    throwApplicationError(400, errors.join(", "));
   }
   req.body.id = generateUniqueId();
   try {

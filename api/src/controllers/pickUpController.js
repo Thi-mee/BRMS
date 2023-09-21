@@ -1,5 +1,5 @@
 const { ErrorResponse } = require("../lib/pickup");
-const { handleValidationError } = require("../lib/utils");
+const { handleValidationError } = require("../utils/helper");
 const validators = require("../lib/validationRules");
 const pickUpService = require("../services/pickUpService");
 const { SuccessResponse } = require("../lib/pickup");

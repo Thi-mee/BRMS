@@ -1,5 +1,5 @@
 const { v4: uuidv4 } = require("uuid");
-const { ErrorResponse } = require("./pickup");
+const { ErrorResponse } = require("../lib/pickup");
 
 const generateUniqueId = () => {
   return uuidv4().slice(0, 29);
@@ -35,6 +35,7 @@ const convertToCamelCase = (obj) => {
   });
   return newObj;
 };
+
 
 module.exports = {
   generateCode,

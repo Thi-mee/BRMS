@@ -1,5 +1,9 @@
 const pool = require("../config/dbConfig");
-const { convertToCamelCase } = require("../lib/utils");
+const { convertToCamelCase } = require("../utils/helper");
+const { ROUTE_SCHEDULE } = require("../utils/constants").TABLES;
+const PickupPoint = require("../models/pickup_point");
+const {throwApplicationError} = require("../middlewares/errorHandler");
+
 
 // Controller to schedule a route
 // const scheduleRoute = async (req, res) => {
@@ -58,24 +62,13 @@ const { convertToCamelCase } = require("../lib/utils");
 
 async function scheduleRoute(route_id, schedule) {
   const pickupPointIds = schedule.map((entry) => entry.pickuppoint_id);
-  const checkPickupPointsQuery = `
-      SELECT id
-      FROM brms.pickuppoints
-      WHERE id = ANY ($1::text[]);
-    `;
-  const pickupPointsResult = await pool.query(checkPickupPointsQuery, [
-    pickupPointIds,
-  ]);
-
-  if (pickupPointsResult.rows.length !== pickupPointIds.length) {
-    return res
-      .status(404)
-      .json({ error: "One or more pick-up points do not exist." });
+  const allPickupExists = await PickupPoint.verifyPickupPoints(pickupPointIds);
+  if (!allPickupExists) {
+    throwApplicationError(404, "One or more pick-up points do not exist.")
   }
-
   try {
     const scheduleQuery = `
-        INSERT INTO brms.route_schedules (route_id, pickuppoint_id, arrival_time, departure_time, service)
+        INSERT INTO ${ROUTE_SCHEDULE} (route_id, pickuppoint_id, arrival_time, departure_time, service)
         VALUES ${schedule
           .map(
             (entry, index) =>

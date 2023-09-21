@@ -13,6 +13,6 @@ module.exports = function (app) {
     });
   });
 
-  app.use(errorHandler())
+  app.use(errorHandler)
   
 };

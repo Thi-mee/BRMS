@@ -1,4 +1,4 @@
-const { generateUniqueId } = require("../../src/lib/utils");
+const { generateUniqueId } = require("../../src/utils/helper");
 
 describe("GenerateId", () => {
   test("Generates a string id of 29 length", () => {
