@@ -43,27 +43,8 @@ async function deletePickUp(pickUpId) {
 
 async function editPickUp(pickUp) {
   try {
-<<<<<<< HEAD
-    const query =
-      'UPDATE brms.pickuppoints SET "name" = $1, "location_id" = $2, "title" = $3, "description" = $4, "bus_stop" = $5, "code" = $6, "status" = $7 WHERE "id" = $8 RETURNING *';
-    const values = [
-      pickUp.name,
-      pickUp.locationId,
-      pickUp.title,
-      pickUp.description,
-      pickUp.busStop,
-      pickUp.code,
-      pickUp.status,
-      pickUp.id,
-    ];
-    const { rows } = await pool.query(query, values);
-    if (rows.length === 0) return null;
-    console.log(rows)
-    return convertToCamelCase(rows[0]);
-=======
     const updatedPickup = await PickupPoint.update(pickUp);
     return convertToCamelCase(updatedPickup);
->>>>>>> 501b8c67f727b5e77e7ac9f2beeb8760fca989de
   } catch (error) {
     console.log(error);
     throw new Error("Failed to edit pick up");

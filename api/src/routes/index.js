@@ -1,11 +1,6 @@
 const errorHandler = require('../middlewares/errorHandler');
 
 module.exports = function (app) {
-<<<<<<< HEAD
-  // app.use(logger)
-  // console.log("hello")
-=======
->>>>>>> 501b8c67f727b5e77e7ac9f2beeb8760fca989de
   app.use('/api/auth', require('./authroute'));
   app.use('/api/pickup-points', require('./pickUpRoutes'));
   app.use('/api/locations', require('./locationRoutes'));
@@ -18,10 +13,6 @@ module.exports = function (app) {
     });
   });
 
-<<<<<<< HEAD
-  // app.use(errorHandler())
-=======
   app.use(errorHandler)
->>>>>>> 501b8c67f727b5e77e7ac9f2beeb8760fca989de
   
 };

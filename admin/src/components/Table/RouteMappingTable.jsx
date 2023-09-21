@@ -6,6 +6,8 @@ import { getRoutesData } from "../../store/selectors";
 const RouteMappingTable = ({ data, setMappedPups, mappedPups }) => {
   const { mappedData } = useSelector(getRoutesData);
 
+  // const [hasRoute, setHasRoute] = useState(null)
+
   const handleAllCheckboxChange = (event) => {
     if (event.target.checked) {
       setMappedPups(data.map((item) => item.id));
