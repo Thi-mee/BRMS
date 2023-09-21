@@ -80,6 +80,8 @@ export const pickUpPointSlice = createSlice({
       })
       .addCase(updatePickUpPoints.rejected, (state, action) => {
         state.updateStatus = REQUEST_STATUS.FAILED;
+        // const  error  = Object.keys(action.error.message);
+        console.log(action)
         state.error = action.error.message ?? "Something went wrong";
       })
       .addCase(addBulkPickUpPoints.pending, (state) => {

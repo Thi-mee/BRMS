@@ -2,7 +2,8 @@ const errorHandler = require('../middlewares/errorHandler');
 const logger = require('../middlewares/logger');
 
 module.exports = function (app) {
-  app.use(logger)
+  // app.use(logger)
+  // console.log("hello")
   app.use('/api/auth', require('./authroute'));
   app.use('/api/pickup-points', require('./pickUpRoutes'));
   app.use('/api/locations', require('./locationRoutes'));
@@ -15,6 +16,6 @@ module.exports = function (app) {
     });
   });
 
-  app.use(errorHandler())
+  // app.use(errorHandler())
   
 };

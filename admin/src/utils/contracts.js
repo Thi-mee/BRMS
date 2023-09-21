@@ -60,7 +60,9 @@ export class PkpDto {
       title: this.pickuppoint.title,
       busStop: this.pickuppoint.busStop,
       description: this.pickuppoint.description,
+      code: this.pickuppoint.code,
       status: this.getStatus(this.pickuppoint.status),
+      startOrEnd: this.pickuppoint.startOrEnd,
     }
     if (this.pickuppoint.location.id) {
       const location = this.locations.find(loc => loc.id === this.pickuppoint.location.id);
@@ -68,15 +70,15 @@ export class PkpDto {
         throw new Error('Error selecting loaction ' + location.title);
       }
       const isUnchanged = compareObjects(location, this.pickuppoint.location);
-      console.log(this.pickuppoint)
       if (isUnchanged) {
         pkpDto.locationId = this.pickuppoint.location.id;
-      } else {
-        pkpDto.location = this.pickuppoint.location;
+      } 
+      else {
+        pkpDto.locationId = this.pickuppoint.location.id;
       }
     } else if (this.pickuppoint.location) {
-      delete this.pickuppoint.location.id;
-      pkpDto.location = this.pickuppoint.location;
+      pkpDto.locationId =  this.pickuppoint.location.id;
+      delete this.pickuppoint.location;
     }
     return pkpDto;
   }

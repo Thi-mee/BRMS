@@ -50,6 +50,7 @@ const PickupFullForm = ({
           name: pickupPoint?.name,
           title: pickupPoint?.title,
           busStop: pickupPoint?.busStop,
+          code: pickupPoint?.code,
           description: pickupPoint?.description,
           status: pickupPoint?.status === "active",
           startOrEnd: pickupPoint?.startOrEnd ?? false,

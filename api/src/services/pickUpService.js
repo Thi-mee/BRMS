@@ -88,6 +88,7 @@ async function editPickUp(pickUp) {
     ];
     const { rows } = await pool.query(query, values);
     if (rows.length === 0) return null;
+    console.log(rows)
     return convertToCamelCase(rows[0]);
   } catch (error) {
     console.log(error);

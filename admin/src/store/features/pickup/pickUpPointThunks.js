@@ -52,7 +52,6 @@ export const addBulkPickUpPoints = createAsyncThunk(
   actionTypes.ADD_BULK_PICKUP_POINTS,
   async (form) => {
     const response = await apiCall(api, "/bulk", "post", form);
-    console.log(response)
     return response.data;
   }
 );

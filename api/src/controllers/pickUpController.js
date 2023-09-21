@@ -6,6 +6,7 @@ const { SuccessResponse } = require("../lib/pickup");
 const {
   createLocationAndPickup,
 } = require("../services/pickupLocationService");
+// console.log("hello")
 
 const addPickUp = async (req, res) => {
   let pickupPoint;
@@ -117,11 +118,13 @@ const addBulkPickups = async (req, res) => {
 const editPickUp = async (req, res) => {
   const errors = validators.createPickUpValidator.validate(req.body);
   if (errors.length > 0) {
+    console.log(errors)
     return res
       .status(400)
       .json(new ErrorResponse({ message: errors.join(", ") }));
   }
   try {
+    console.log(req.body)
     const retVal = await pickUpService.editPickUp(req.body);
     if (retVal === null) {
       return res
@@ -135,6 +138,7 @@ const editPickUp = async (req, res) => {
       })
     );
   } catch (error) {
+    console.log(error.message)
     return res.status(500).json(new ErrorResponse({ message: error.message }));
   }
 };

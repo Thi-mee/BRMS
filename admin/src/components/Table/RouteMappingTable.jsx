@@ -4,12 +4,9 @@ import { useSelector } from "react-redux/es/hooks/useSelector";
 import { getRoutesData } from "../../store/selectors";
 
 const RouteMappingTable = ({ data, setMappedPups, mappedPups }) => {
-  // const [isChecked, setIsChecked] = useState(false);
-  // const [mappedToARoute, setMappedToARoute] = useState(true);
   const { mappedData } = useSelector(getRoutesData);
 
   const handleAllCheckboxChange = (event) => {
-    // setIsChecked(event.target.checked);
     if (event.target.checked) {
       setMappedPups(data.map((item) => item.id));
     } else {
@@ -18,13 +15,13 @@ const RouteMappingTable = ({ data, setMappedPups, mappedPups }) => {
   };
 
   const handleCheckboxChange = (event, item) => {
-    console.log(item);
     setMappedPups((prevMappedPups) => {
       if (prevMappedPups.includes(item.id)) {
         return prevMappedPups.filter((id) => id !== item.id);
       }
       return [...prevMappedPups, item.id];
     });
+    console.log(mappedPups);
   };
 
   return (
@@ -51,7 +48,7 @@ const RouteMappingTable = ({ data, setMappedPups, mappedPups }) => {
                 <td>
                   <input
                     type="checkbox"
-                    checked={mappedPups.some((id) => id === item.id)}
+                    checked={mappedData.some((route) => route.pickuppointId === item.id)}
                     onChange={(event) => {
                       handleCheckboxChange(event, item);
                     }}
