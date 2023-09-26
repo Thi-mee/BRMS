@@ -1,37 +1,18 @@
 const { ErrorResponse } = require("../lib/pickup");
-const { handleValidationError } = require("../utils/helper");
 const validators = require("../lib/validationRules");
 const pickUpService = require("../services/pickUpService");
 const { SuccessResponse } = require("../lib/pickup");
 const {
   createLocationAndPickup,
 } = require("../services/pickupLocationService");
-// console.log("hello")
 
-const addPickUp = async (req, res) => {
+const addPickUp = async (req, res, next) => {
   let pickupPoint;
-
   try {
     if (req.body.locationId) {
-      const errors = validators.pickUpWithLocationIdValidator.validate(
-        req.body
-      );
-      if (errors.length > 0) return handleValidationError(res, errors);
       pickupPoint = await pickUpService.addPickUp(req.body);
-    } else if (req.body.location) {
-      let errors = validators.createLocationValidator.validate(
-        req.body.location
-      );
-      if (errors.length > 0) return handleValidationError(res, errors);
-      errors = validators.createPickUpValidator.validate(req.body);
-      if (errors.length > 0) return handleValidationError(res, errors);
-      pickupPoint = await createLocationAndPickup(req.body);
     } else {
-      return res.status(400).json(
-        new ErrorResponse({
-          message: "Invalid request body. Expected locationId or location",
-        })
-      );
+      pickupPoint = await createLocationAndPickup(req.body);
     }
     return res.status(201).json(
       new SuccessResponse({
@@ -40,8 +21,7 @@ const addPickUp = async (req, res) => {
       })
     );
   } catch (error) {
-    console.log(error);
-    return res.status(409).json(new ErrorResponse({ message: error.message }));
+    next(error)
   }
 };
 
@@ -116,15 +96,8 @@ const addBulkPickups = async (req, res) => {
 };
 
 const editPickUp = async (req, res) => {
-  const errors = validators.createPickUpValidator.validate(req.body);
-  if (errors.length > 0) {
-    console.log(errors)
-    return res
-      .status(400)
-      .json(new ErrorResponse({ message: errors.join(", ") }));
-  }
   try {
-    console.log(req.body)
+    console.log(req.body);
     const retVal = await pickUpService.editPickUp(req.body);
     if (retVal === null) {
       return res
@@ -138,7 +111,7 @@ const editPickUp = async (req, res) => {
       })
     );
   } catch (error) {
-    console.log(error.message)
+    console.log(error.message);
     return res.status(500).json(new ErrorResponse({ message: error.message }));
   }
 };

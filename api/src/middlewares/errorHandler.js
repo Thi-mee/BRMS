@@ -2,7 +2,7 @@
 
 
 class ApplicationError extends Error {
-    constructor(statusCode, message, data = null) {
+    constructor(statusCode, message, data) {
         super(message);
         this.name = "BRMSApplicationError"
         this.statusCode = statusCode;
@@ -10,7 +10,7 @@ class ApplicationError extends Error {
     }
 }
 
-exports.throwApplicationError = (statusCode, message, data = null) => {
+const throwApplicationError = (statusCode, message, data = null) => {
     throw new ApplicationError(statusCode, message, data);
 }
 
@@ -43,4 +43,4 @@ const errorHandler = (err, req, res, next) => {
     });
 }
 
-module.exports = errorHandler;
+module.exports = {errorHandler, throwApplicationError};

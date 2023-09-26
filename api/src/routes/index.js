@@ -1,4 +1,4 @@
-const errorHandler = require('../middlewares/errorHandler');
+const {errorHandler} = require('../middlewares/errorHandler');
 
 module.exports = function (app) {
   app.use('/api/auth', require('./authroute'));

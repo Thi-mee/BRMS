@@ -1,12 +1,6 @@
-const {
-  editLocationValidator,
-  createLocationValidator,
-} = require("../lib/validationRules");
 const locationService = require("../services/locationService");
 const {throwApplicationError} = require("../middlewares/errorHandler");
 
-const validationError = (errors) => errors.map((i) => i.message).join(", ");
-const errorResponseObj = (message) => ({ success: false, message });
 
 const getLocations = async (req, res, next) => {
   try {
@@ -25,10 +19,6 @@ const getLocations = async (req, res, next) => {
 };
 
 const editLocation = async (req, res, next) => {
-  const errors = editLocationValidator.validate(req.body);
-  if (errors.length > 0) {
-    throwApplicationError(400, validationError(errors))
-  }
   try {
     const retVal = await locationService.editLocation(req.body);
     if (retVal === null) {
@@ -64,10 +54,6 @@ const deleteLocation = async (req, res) => {
 };
 
 const addLocation = async (req, res, next) => {
-  const errors = createLocationValidator.validate(req.body);
-  if (errors.length > 0) {
-    throwApplicationError(400, validationError(errors))
-  }
   try {
     const newLocation = await locationService.createLocation(req.body);
     return res.status(200).json({

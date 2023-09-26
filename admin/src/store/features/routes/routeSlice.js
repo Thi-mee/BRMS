@@ -76,6 +76,9 @@ const routeSlice = createSlice({
       })
       .addCase(mapRoutes.fulfilled, (state, action) => {
         state.mapStatus = REQUEST_STATUS.SUCCEEDED;
+        console.log(action)
+        console.log(action?.payload)
+        // state.data = state.mappedData.filter((r) => r.id !== action.payload.id);
         state.data = state.data.map((r) =>
           r.id === action.payload.id ? action.payload : r
         );

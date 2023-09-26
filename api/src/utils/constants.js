@@ -13,3 +13,16 @@ exports.TABLES = {
   ROUTE_SCHEDULE: `${schema}.route_schedules`,
   PASSENGER: `${schema}.passengers`
 }
+
+exports.PP_STATUS = {
+  ACTIVE: 'active',
+  INACTIVE: 'inactive'
+}
+
+exports.LCDAS = [
+  "igbogboBaiyeku",
+  "ijede",
+  "ikoroduNorth",
+  "ikoroduWest",
+  "imota",
+];

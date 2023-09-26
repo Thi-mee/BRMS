@@ -1,6 +1,7 @@
 const pool = require("../config/dbConfig");
 const { UNIQUE_VIOLATION_CODE } = require("../lib/constants");
 const { generateUniqueId, generateCode } = require("../utils/helper");
+const { throwApplicationError } = require("../middlewares/errorHandler");
 
 /**
  * Creates a pickupPoint with a new location
@@ -88,7 +89,7 @@ async function createLocationAndPickup(data) {
 			if (e.constraint === 'locations_title_key') {
 				throw new Error('A Location with that title already exists');
 			} else if (e.constraint === 'pickuppoints_name_key') {
-				throw new Error('A Pickup Point with that name already exists');
+				throwApplicationError(409, 'A Pickup Point with that name already exists')
 			} else if (e.constraint === 'pickuppoints_code_key') {
 				throw new Error('An error occurred while generating a unique code for the pickup point');
 			}
